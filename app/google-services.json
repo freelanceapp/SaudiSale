@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "402033896901",
+    "project_id": "for-sale-c5d26",
+    "storage_bucket": "for-sale-c5d26.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402033896901:android:a541b7aa21a0961a686fac",
+        "android_client_info": {
+          "package_name": "com.saudi_sale"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "402033896901-0ui02rri6un08a9ab0dljm1ivt0j4bq5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.saudi_sale",
+            "certificate_hash": "0b354f3a0c02eaba29510595124a7d68aea8edf3"
+          }
+        },
+        {
+          "client_id": "402033896901-k1hb8t7bgv3inl68ftj8gpiomg7eguj9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjBMfcfA7-4J32sasrsHTJhOeFSTsX3I0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "402033896901-k1hb8t7bgv3inl68ftj8gpiomg7eguj9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "402033896901-nhg48jtoiqddsec78it63qjb5g7th9fe.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.endpoint.ForSale"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
