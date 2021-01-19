@@ -18,14 +18,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
+import com.saudi_sale.adapters.RoomAdapter;
 import com.saudi_sale.databinding.FragmentChatBinding;
+import com.saudi_sale.models.DepartmentDataModel;
+import com.saudi_sale.models.RoomDataModel;
+import com.saudi_sale.models.RoomModel;
 import com.saudi_sale.models.UserModel;
 import com.saudi_sale.preferences.Preferences;
+import com.saudi_sale.remote.Api;
+import com.saudi_sale.tags.Tags;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,7 +51,10 @@ public class Fragment_Chat extends Fragment {
     private HomeActivity activity;
     private FragmentChatBinding binding;
     private Preferences preferences;
+    private UserModel userModel;
     private String lang;
+    private List<RoomModel> roomModelList;
+    private RoomAdapter adapter;
 
     public static Fragment_Chat newInstance() {
 
@@ -64,14 +76,101 @@ public class Fragment_Chat extends Fragment {
     }
 
     private void initView() {
+        roomModelList = new ArrayList<>();
         activity = (HomeActivity) getActivity();
         preferences = Preferences.getInstance();
         Paper.init(activity);
         lang = Paper.book().read("lang", Locale.getDefault().getLanguage());
         binding.setLang(lang);
+        binding.recView.setLayoutManager(new LinearLayoutManager(activity));
+        adapter = new RoomAdapter(roomModelList,activity,this);
+        binding.recView.setAdapter(adapter);
+        binding.swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        getRooms();
+        binding.swipeRefresh.setOnRefreshListener(() -> getRooms());
 
     }
 
+    private void getRooms(){
+        try {
+            userModel = preferences.getUserData(activity);
+            if (userModel==null){
+                binding.progBar.setVisibility(View.GONE);
+                binding.swipeRefresh.setRefreshing(false);
+                binding.tvNoConversation.setVisibility(View.VISIBLE);
+
+                return;
+            }
+            Api.getService(Tags.base_url)
+                    .getRooms("Bearer "+userModel.getData().getToken(),userModel.getData().getId())
+                    .enqueue(new Callback<RoomDataModel>() {
+                        @Override
+                        public void onResponse(Call<RoomDataModel> call, Response<RoomDataModel> response) {
+                            binding.progBar.setVisibility(View.GONE);
+                            binding.swipeRefresh.setRefreshing(false);
+                            if (response.isSuccessful() && response.body() != null ) {
+                                if (response.body().getStatus()==200){
+                                    if (response.body().getData().size()>0){
+                                        roomModelList.clear();
+                                        roomModelList.addAll(response.body().getData());
+                                        adapter.notifyDataSetChanged();
+                                        binding.tvNoConversation.setVisibility(View.GONE);
+                                    }else {
+                                        binding.tvNoConversation.setVisibility(View.VISIBLE);
+
+                                    }
+                                }else {
+                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                binding.swipeRefresh.setRefreshing(false);
+
+                                binding.progBar.setVisibility(View.GONE);
+
+                                if (response.code() == 500) {
+                                    Toast.makeText(activity, "Server Error", Toast.LENGTH_SHORT).show();
 
 
+                                } else {
+                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                    try {
+
+                                        Log.e("error", response.code() + "_" + response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<RoomDataModel> call, Throwable t) {
+                            try {
+                                binding.swipeRefresh.setRefreshing(false);
+
+                                binding.progBar.setVisibility(View.GONE);
+
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage());
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(activity, R.string.something, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(activity, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                            } catch (Exception e) {
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+
+        }
+    }
+
+
+    public void setRoomDate(RoomModel roomModel) {
+
+    }
 }

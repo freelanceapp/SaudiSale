@@ -19,26 +19,36 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.saudi_sale.R;
+import com.saudi_sale.activities_fragments.activity_department_details.DepartmentDetailsActivity;
 import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Chat;
 import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Home;
 import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Offer;
 import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Profile;
 import com.saudi_sale.activities_fragments.activity_login.LoginActivity;
+import com.saudi_sale.adapters.ExpandDepartmentAdapter;
 import com.saudi_sale.databinding.ActivityHomeBinding;
 import com.saudi_sale.language.Language;
+import com.saudi_sale.models.DepartmentDataModel;
+import com.saudi_sale.models.DepartmentModel;
 import com.saudi_sale.models.NotFireModel;
+import com.saudi_sale.models.ProductsDataModel;
 import com.saudi_sale.models.UserModel;
 import com.saudi_sale.preferences.Preferences;
+import com.saudi_sale.remote.Api;
 import com.saudi_sale.share.Common;
+import com.saudi_sale.tags.Tags;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.paperdb.Paper;
@@ -57,9 +67,10 @@ public class HomeActivity extends AppCompatActivity {
     private Fragment_Offer fragment_offer;
     private UserModel userModel;
     private String lang;
-    private String token;
     private ActionBarDrawerToggle toggle;
-
+    private List<DepartmentModel> departmentModelList;
+    private ExpandDepartmentAdapter expandDepartmentAdapter;
+    private int parent_pos = -1, child_pos = -1;
 
 
     protected void attachBaseContext(Context newBase) {
@@ -78,16 +89,17 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        departmentModelList = new ArrayList<>();
         fragmentManager = getSupportFragmentManager();
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         Paper.init(this);
         lang = Paper.book().read("lang", "ar");
         binding.setLang(lang);
-        toggle = new ActionBarDrawerToggle(this,binding.drawerLayout,binding.toolbar,R.string.open,R.string.close);
+        toggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close);
         toggle.syncState();
         binding.toolbar.setNavigationIcon(R.drawable.ic_squares);
-        binding.toolbar.getNavigationIcon().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+        binding.toolbar.getNavigationIcon().setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         binding.flNotification.setOnClickListener(view -> {
 
 
@@ -104,13 +116,13 @@ public class HomeActivity extends AppCompatActivity {
         binding.setModel(userModel);
 
 
-
-
+        binding.recViewNavigation.setLayoutManager(new LinearLayoutManager(this));
+        expandDepartmentAdapter = new ExpandDepartmentAdapter(departmentModelList, this);
+        binding.recViewNavigation.setAdapter(expandDepartmentAdapter);
 
         binding.flHome.setOnClickListener(v -> {
             displayFragmentMain();
         });
-
 
 
         binding.flProfile.setOnClickListener(v -> {
@@ -136,8 +148,84 @@ public class HomeActivity extends AppCompatActivity {
 
         }
 
+
+        binding.swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        binding.swipeRefresh.setOnRefreshListener(this::getDepartments);
+        getDepartments();
+
     }
 
+
+    private void getDepartments() {
+        try {
+
+            Api.getService(Tags.base_url)
+                    .getDepartment()
+                    .enqueue(new Callback<DepartmentDataModel>() {
+                        @Override
+                        public void onResponse(Call<DepartmentDataModel> call, Response<DepartmentDataModel> response) {
+                            binding.progBarNavigation.setVisibility(View.GONE);
+                            binding.swipeRefresh.setRefreshing(false);
+                            if (response.isSuccessful() && response.body() != null) {
+                                if (response.body().getStatus() == 200) {
+                                    if (response.body().getData().size() > 0) {
+                                        departmentModelList.clear();
+                                        departmentModelList.addAll(response.body().getData());
+                                        expandDepartmentAdapter.notifyDataSetChanged();
+                                        binding.tvNoDataNavigation.setVisibility(View.GONE);
+                                    } else {
+                                        binding.tvNoDataNavigation.setVisibility(View.VISIBLE);
+
+                                    }
+                                } else {
+                                    Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                binding.swipeRefresh.setRefreshing(false);
+
+                                binding.progBarNavigation.setVisibility(View.GONE);
+
+                                if (response.code() == 500) {
+                                    Toast.makeText(HomeActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+
+
+                                } else {
+                                    Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                    try {
+
+                                        Log.e("error", response.code() + "_" + response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<DepartmentDataModel> call, Throwable t) {
+                            try {
+                                binding.swipeRefresh.setRefreshing(false);
+
+                                binding.progBarNavigation.setVisibility(View.GONE);
+
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage());
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(HomeActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(HomeActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                            } catch (Exception e) {
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+
+        }
+    }
 
 
     private void readNotificationCount() {
@@ -151,7 +239,6 @@ public class HomeActivity extends AppCompatActivity {
             if (fragment_home == null) {
                 fragment_home = Fragment_Home.newInstance();
             }
-
 
 
             if (fragment_offer != null && fragment_offer.isAdded()) {
@@ -232,7 +319,6 @@ public class HomeActivity extends AppCompatActivity {
             }
 
 
-
             if (fragment_profile.isAdded()) {
                 fragmentManager.beginTransaction().show(fragment_profile).commit();
 
@@ -264,7 +350,6 @@ public class HomeActivity extends AppCompatActivity {
             if (fragment_profile != null && fragment_profile.isAdded()) {
                 fragmentManager.beginTransaction().hide(fragment_profile).commit();
             }
-
 
 
             if (fragment_chat.isAdded()) {
@@ -329,7 +414,6 @@ public class HomeActivity extends AppCompatActivity {
         binding.tvChat.setVisibility(View.GONE);
 
     }
-
 
 
     private void updateProfileUi() {
@@ -540,7 +624,7 @@ public class HomeActivity extends AppCompatActivity {
         if (fragment_home != null && fragment_home.isAdded() && fragment_home.isVisible()) {
             if (userModel != null) {
                 finish();
-            }else {
+            } else {
                 navigateToSignInActivity();
             }
         } else {
@@ -586,7 +670,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
+    public void setItemSubDepartmentData(DepartmentModel.SubCategory subCategory, int parent_pos, int adapterPosition) {
+        DepartmentModel departmentModel = departmentModelList.get(parent_pos);
+        Intent intent = new Intent(this, DepartmentDetailsActivity.class);
+        intent.putExtra("data", departmentModel);
+        intent.putExtra("child_pos", adapterPosition);
+        startActivity(intent);
 
-
-
+        this.parent_pos = parent_pos;
+        this.child_pos = adapterPosition;
+    }
 }

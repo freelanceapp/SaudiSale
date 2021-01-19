@@ -1,7 +1,10 @@
 package com.saudi_sale.services;
 
+import com.saudi_sale.models.DepartmentDataModel;
 import com.saudi_sale.models.PlaceGeocodeData;
 import com.saudi_sale.models.PlaceMapDetailsData;
+import com.saudi_sale.models.ProductsDataModel;
+import com.saudi_sale.models.RoomDataModel;
 import com.saudi_sale.models.UserModel;
 
 import okhttp3.MultipartBody;
@@ -10,6 +13,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -59,6 +63,34 @@ public interface Service {
                                     @Part("software_type") RequestBody software_type,
                                     @Part MultipartBody.Part logo
 
+
+    );
+
+    @GET("api/home-link-filter")
+    Call<ProductsDataModel> getProducts(@Query(value = "search_key") String search_key,
+                                        @Query(value = "using_my_location") String using_my_location
+
+    );
+
+    @GET("api/offerSlider")
+    Call<ProductsDataModel> getLatestOffer();
+
+    @GET("api/allOffers")
+    Call<ProductsDataModel> getOffer();
+
+    @GET("api/all-categories")
+    Call<DepartmentDataModel> getDepartment();
+
+    @FormUrlEncoded
+    @POST("api/my-chat-rooms")
+    Call<RoomDataModel> getRooms(@Header("Authorization") String user_token,
+                                 @Field("user_id") int user_id
+    );
+
+    @GET("api/productFilterByCategory")
+    Call<ProductsDataModel> getFilteredProducts(@Query(value = "category_id") int category_id,
+                                                @Query(value = "sub_category_id") int sub_category_id,
+                                                @Query(value = "using_user_location") String using_my_location
 
     );
 

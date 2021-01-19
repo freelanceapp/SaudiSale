@@ -1,6 +1,7 @@
 package com.saudi_sale.general_ui_method;
 
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -9,9 +10,15 @@ import android.widget.TextView;
 import androidx.databinding.BindingAdapter;
 
 import com.saudi_sale.R;
+import com.saudi_sale.share.Time_Ago;
 import com.saudi_sale.tags.Tags;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -43,7 +50,7 @@ public class GeneralMethod {
             CircleImageView imageView = (CircleImageView) view;
             if (endPoint != null) {
 
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.ic_avatar).into(imageView);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).into(imageView);
             } else {
                 Picasso.get().load(R.drawable.ic_avatar).into(imageView);
 
@@ -53,7 +60,7 @@ public class GeneralMethod {
 
             if (endPoint != null) {
 
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.ic_avatar).fit().into(imageView);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).fit().into(imageView);
             } else {
                 Picasso.get().load(R.drawable.ic_avatar).into(imageView);
 
@@ -63,7 +70,7 @@ public class GeneralMethod {
 
             if (endPoint != null) {
 
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.ic_avatar).fit().into(imageView);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).fit().into(imageView);
             } else {
                 Picasso.get().load(R.drawable.ic_avatar).into(imageView);
 
@@ -93,6 +100,22 @@ public class GeneralMethod {
         }
 
     }
+
+    @BindingAdapter("date")
+    public static void date(TextView view, String date) {
+        if (date!=null&&!date.isEmpty()){
+           String[] dates = date.split("T");
+           view.setText(dates[0]);
+        }
+
+    }
+
+    @BindingAdapter("date2")
+    public static void date2(TextView view, long date2) {
+        String d = Time_Ago.getTimeAgo(date2*1000,view.getContext());
+        view.setText(d);
+    }
+
 
 }
 

@@ -2,27 +2,42 @@ package com.saudi_sale.activities_fragments.activity_home.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
+import com.saudi_sale.adapters.ProductAdapter;
 import com.saudi_sale.databinding.FragmentHomeBinding;
+import com.saudi_sale.models.ProductModel;
+import com.saudi_sale.models.ProductsDataModel;
 import com.saudi_sale.models.UserModel;
 import com.saudi_sale.preferences.Preferences;
+import com.saudi_sale.remote.Api;
+import com.saudi_sale.tags.Tags;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import io.paperdb.Paper;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Fragment_Home extends Fragment {
 
@@ -31,6 +46,8 @@ public class Fragment_Home extends Fragment {
     private Preferences preferences;
     private String lang;
     private UserModel userModel;
+    private ProductAdapter productAdapter;
+    private List<ProductModel> productModelList;
     private LinearLayoutManager manager;
 
 
@@ -55,16 +72,111 @@ public class Fragment_Home extends Fragment {
     private void initView() {
 
         activity = (HomeActivity) getActivity();
+        productModelList = new ArrayList<>();
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(activity);
         Paper.init(activity);
-        lang = Paper.book().read("lang", Locale.getDefault().getLanguage());manager = new LinearLayoutManager(activity);
+        lang = Paper.book().read("lang", "ar");
+        binding.swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        manager = new LinearLayoutManager(activity);
+        productAdapter = new ProductAdapter(productModelList,activity,this);
+        binding.recView.setLayoutManager(manager);
+        binding.recView.setAdapter(productAdapter);
+        binding.edtSearch.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i== EditorInfo.IME_ACTION_SEARCH){
+                String query = binding.edtSearch.getText().toString();
+                if (!query.isEmpty()){
+                    productModelList.clear();
+                    productAdapter.notifyDataSetChanged();
+                    binding.progBar.setVisibility(View.VISIBLE);
+                    getProducts(query);
+                }
+            }
+            return false;
+        });
+        getProducts(null);
 
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            String query = binding.edtSearch.getText().toString();
+            if (query.isEmpty()){
+                query = null;
+            }
+            getProducts(query);
 
-
+        });
 
 
     }
+
+    private void getProducts(String query){
+        try {
+
+            Api.getService(Tags.base_url)
+                    .getProducts(query,"no")
+                    .enqueue(new Callback<ProductsDataModel>() {
+                        @Override
+                        public void onResponse(Call<ProductsDataModel> call, Response<ProductsDataModel> response) {
+                            binding.progBar.setVisibility(View.GONE);
+                            binding.swipeRefresh.setRefreshing(false);
+                            if (response.isSuccessful() && response.body() != null ) {
+                                if (response.body().getStatus()==200){
+                                    if (response.body().getData().size()>0){
+                                        productModelList.clear();
+                                        productModelList.addAll(response.body().getData());
+                                        productAdapter.notifyDataSetChanged();
+                                        binding.tvNoData.setVisibility(View.GONE);
+                                    }else {
+                                        binding.tvNoData.setVisibility(View.VISIBLE);
+
+                                    }
+                                }else {
+                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                binding.progBar.setVisibility(View.GONE);
+                                binding.swipeRefresh.setRefreshing(false);
+
+                                if (response.code() == 500) {
+                                    Toast.makeText(activity, "Server Error", Toast.LENGTH_SHORT).show();
+
+
+                                } else {
+                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                    try {
+
+                                        Log.e("error", response.code() + "_" + response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ProductsDataModel> call, Throwable t) {
+                            try {
+                                binding.progBar.setVisibility(View.GONE);
+                                binding.swipeRefresh.setRefreshing(false);
+
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage());
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(activity, R.string.something, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(activity, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                            } catch (Exception e) {
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+
+        }
+    }
+
 
 
 
@@ -77,5 +189,7 @@ public class Fragment_Home extends Fragment {
     }
 
 
+    public void setProductItemData(ProductModel productModel) {
 
+    }
 }

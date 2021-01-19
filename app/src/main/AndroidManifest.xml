@@ -24,27 +24,30 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-
-        <activity android:name=".activities_fragments.activity_home.HomeActivity"
+        <activity android:name=".activities_fragments.activity_department_details.DepartmentDetailsActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             />
-        <activity android:name=".activities_fragments.activity_verification_code.VerificationCodeActivity"
+        <activity
+            android:name=".activities_fragments.activity_home.HomeActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
-        <activity android:name=".activities_fragments.activity_sign_up.SignUpActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_verification_code.VerificationCodeActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
-            />
-        <activity android:name=".activities_fragments.activity_login.LoginActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_sign_up.SignUpActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
-            />
-        <activity android:name=".activities_fragments.activity_splash.SplashActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+        <activity
+            android:name=".activities_fragments.activity_login.LoginActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+        <activity
+            android:name=".activities_fragments.activity_splash.SplashActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

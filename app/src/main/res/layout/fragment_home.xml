@@ -47,16 +47,18 @@
                     app:tint="@color/gray4"
                     />
                 <EditText
+                    android:id="@+id/edtSearch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingEnd="8dp"
                     android:paddingStart="8dp"
                     android:textColorHint="@color/gray4"
                     android:hint="@string/search"
-                    android:background="@color/white"
+                    android:background="@color/transparent"
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:imeOptions="actionSearch"
+                    android:textSize="14sp"
                     />
             </LinearLayout>
         </FrameLayout>
@@ -86,12 +88,19 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         >
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recView"
+                        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                            android:id="@+id/swipeRefresh"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            >
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recView"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
 
-                            />
+                                />
+                        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
                         <ProgressBar
                             android:id="@+id/progBar"
@@ -100,25 +109,16 @@
                             android:layout_gravity="center"
                             />
 
-                        <LinearLayout
-                            android:id="@+id/llNoData"
-
+                        <TextView
+                            android:id="@+id/tvNoData"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
                             android:layout_gravity="center"
+                            android:text="@string/no_data_to_show"
                             android:visibility="gone"
-                            >
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/black"
-                                android:textSize="17sp"
-                                android:layout_gravity="center"
-                                android:text="@string/no_data_to_show"
-                                />
-                        </LinearLayout>
+                            />
 
 
                     </FrameLayout>

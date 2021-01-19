@@ -66,5 +66,10 @@
     <string name="open">فتح</string>
     <string name="close">غلق</string>
     <string name="search">بحث...</string>
+    <string name="sar">ر.س</string>
+    <string name="latest_offers">أحدث العروض</string>
+    <string name="departments">الأقسام</string>
+    <string name="coupons">الكوبونات</string>
+    <string name="photo_sent">تم إرسال صورة</string>
 
 </resources>
