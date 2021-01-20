@@ -28,10 +28,12 @@ public class ProductModel implements Serializable {
    private String created_at;
    private String updated_at;
    private int time_in_days_from_creating;
+   private String is_favorite;
+   private String is_report;
    private UserModel.Data user;
    private Category category;
    private SubCategory sub_category;
-   private List<ProductImage> product_images;
+   private List<ProductImageModel> product_images;
    private List<ProductDetail> product_details;
    private List<ProductType> product_types;
 
@@ -139,7 +141,7 @@ public class ProductModel implements Serializable {
         return sub_category;
     }
 
-    public List<ProductImage> getProduct_images() {
+    public List<ProductImageModel> getProduct_images() {
         return product_images;
     }
 
@@ -149,6 +151,22 @@ public class ProductModel implements Serializable {
 
     public List<ProductType> getProduct_types() {
         return product_types;
+    }
+
+    public String getIs_favorite() {
+        return is_favorite;
+    }
+
+    public String getIs_report() {
+        return is_report;
+    }
+
+    public void setIs_favorite(String is_favorite) {
+        this.is_favorite = is_favorite;
+    }
+
+    public void setIs_report(String is_report) {
+        this.is_report = is_report;
     }
 
     public static class Category implements Serializable
@@ -198,6 +216,8 @@ public class ProductModel implements Serializable {
         public String getUpdated_at() {
             return updated_at;
         }
+
+
     }
 
     public static class SubCategory implements Serializable
@@ -346,32 +366,5 @@ public class ProductModel implements Serializable {
         }
     }
 
-    public static class ProductImage implements Serializable{
-        private int id;
-        private String image;
-        private int product_id;
-        private String created_at;
-        private String updated_at;
-
-        public int getId() {
-            return id;
-        }
-
-        public String getImage() {
-            return image;
-        }
-
-        public int getProduct_id() {
-            return product_id;
-        }
-
-        public String getCreated_at() {
-            return created_at;
-        }
-
-        public String getUpdated_at() {
-            return updated_at;
-        }
-    }
 
 }

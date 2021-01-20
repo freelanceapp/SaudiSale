@@ -4,7 +4,7 @@
     <data>
         <variable
             name="model"
-            type="com.saudi_sale.models.DepartmentModel.SubCategory" />
+            type="com.saudi_sale.models.TypeModel" />
     </data>
 
     <androidx.cardview.widget.CardView

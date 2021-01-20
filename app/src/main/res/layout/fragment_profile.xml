@@ -10,6 +10,9 @@
         <variable
             name="lang"
             type="String" />
+        <variable
+            name="actions"
+            type="com.saudi_sale.interfaces.Listeners.ProfileActions" />
         <import type="android.view.View"/>
     </data>
 
@@ -133,6 +136,7 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
+                    android:onClick="@{()->actions.onAddAd()}"
                     >
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -170,6 +174,8 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
+                    android:onClick="@{()->actions.onMyAds()}"
+
                     >
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -208,6 +214,8 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
+                    android:onClick="@{()->actions.onMyFavorite()}"
+
                     >
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -252,6 +260,8 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
+                    android:onClick="@{()->actions.onCommission()}"
+
                     >
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -289,6 +299,8 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
+                    android:onClick="@{()->actions.onContactUs()}"
+
                     >
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -327,6 +339,8 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
+                    android:onClick="@{()->actions.onSetting()}"
+
                     >
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -372,6 +386,8 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
+                    android:onClick="@{()->actions.onLogout()}"
+
                     >
                     <LinearLayout
                         android:layout_width="wrap_content"

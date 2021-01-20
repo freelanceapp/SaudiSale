@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
+import com.saudi_sale.activities_fragments.activity_product_details.ProductDetailsActivity;
 import com.saudi_sale.adapters.LatestOfferAdapter;
 import com.saudi_sale.adapters.OfferAdapter;
 import com.saudi_sale.databinding.FragmentOfferBinding;
@@ -226,6 +227,8 @@ public class Fragment_Offer extends Fragment {
     }
 
     public void setProductItemData(ProductModel productModel) {
-
+        Intent intent = new Intent(activity, ProductDetailsActivity.class);
+        intent.putExtra("product_id",productModel.getId());
+        startActivity(intent);
     }
 }

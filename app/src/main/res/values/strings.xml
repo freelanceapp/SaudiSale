@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">SaudiSale</string>
+    <string name="map_key">AIzaSyA6QI378BHt9eqBbiJKtqWHTSAZxcSwN3Q</string>
+
     <string name="login">Login</string>
     <string name="code">Code</string>
     <string name="user_phone">Phone number</string>
@@ -71,5 +73,24 @@
     <string name="departments">Departments</string>
     <string name="coupons">Coupons</string>
     <string name="photo_sent">Photo sent</string>
+    <string name="no_image">No image</string>
+    <string name="ad_details">Ad details</string>
+    <string name="price">Price</string>
+    <string name="copied">Copied</string>
+    <string name="ad_name">Ad name</string>
+    <string name="upload_video">Upload video</string>
+    <string name="ad_price">Price</string>
+    <string name="address">Address</string>
+    <string name="ch_types">Choose types</string>
+    <string name="ch_ad_image">Choose ad images</string>
+    <string name="ch_dept">Choose department</string>
+    <string name="ch_sub_dept">Choose Sub department</string>
+    <string name="vid_pem_denied">Video permission denied</string>
+    <string name="max_ad_photo">maximum 5 photos</string>
+    <string name="length_video_shouldnot_exceed">Length of video shouldn\'t exceed 59 seconds</string>
+    <string name="add_offer">Add offer</string>
+    <string name="price_after_offer">Price after offer</string>
+    <string name="offer_value">Offer value</string>
+    <string name="inv_value">Invalid value</string>
 
 </resources>

@@ -1,10 +1,14 @@
 package com.saudi_sale.services;
 
 import com.saudi_sale.models.DepartmentDataModel;
+import com.saudi_sale.models.ItemAddAdsDataModel;
 import com.saudi_sale.models.PlaceGeocodeData;
 import com.saudi_sale.models.PlaceMapDetailsData;
 import com.saudi_sale.models.ProductsDataModel;
 import com.saudi_sale.models.RoomDataModel;
+import com.saudi_sale.models.SingleProductDataModel;
+import com.saudi_sale.models.StatusResponse;
+import com.saudi_sale.models.TypeDataModel;
 import com.saudi_sale.models.UserModel;
 
 import okhttp3.MultipartBody;
@@ -90,7 +94,42 @@ public interface Service {
     @GET("api/productFilterByCategory")
     Call<ProductsDataModel> getFilteredProducts(@Query(value = "category_id") int category_id,
                                                 @Query(value = "sub_category_id") int sub_category_id,
-                                                @Query(value = "using_user_location") String using_my_location
+                                                @Query(value = "using_user_location") String using_my_location,
+                                                @Query(value = "using_price") String using_price,
+                                                @Query(value = "type_id") int type_id
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/getTypesByCatIdOrSubCatId")
+    Call<TypeDataModel> getTypes(@Field("category_id") int category_id,
+                                 @Field("sub_category_id") int sub_category_id
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/singleProduct")
+    Call<SingleProductDataModel> getProductById(@Field("product_id") int product_id,
+                                                @Field("user_id") String user_id
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/favouriteProductToggle")
+    Call<StatusResponse> like_disliked(@Header("Authorization") String user_token,
+                                       @Field("product_id") int product_id
+    );
+
+    @FormUrlEncoded
+    @POST("api/makeReport")
+    Call<StatusResponse> report(@Header("Authorization") String user_token,
+                                @Field("product_id") int product_id,
+                                @Field("title") String title
+    );
+
+    @FormUrlEncoded
+    @POST("api/allAttribuitesBySubCategoryId")
+    Call<ItemAddAdsDataModel> getItemsAds(@Field("sub_category_id") int sub_category_id
 
     );
 

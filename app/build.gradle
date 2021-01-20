@@ -63,5 +63,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.4.0'
     implementation 'com.google.firebase:firebase-core:17.5.0'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+
 }
 apply plugin: 'com.google.gms.google-services'

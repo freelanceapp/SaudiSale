@@ -14,14 +14,16 @@ import androidx.fragment.app.Fragment;
 
 
 import com.saudi_sale.R;
+import com.saudi_sale.activities_fragments.activity_add_ads.AddAdsActivity;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
 import com.saudi_sale.databinding.FragmentProfileBinding;
+import com.saudi_sale.interfaces.Listeners;
 import com.saudi_sale.models.UserModel;
 import com.saudi_sale.preferences.Preferences;
 
 import io.paperdb.Paper;
 
-public class Fragment_Profile extends Fragment {
+public class Fragment_Profile extends Fragment implements Listeners.ProfileActions {
 
     private HomeActivity activity;
     private FragmentProfileBinding binding;
@@ -56,6 +58,7 @@ public class Fragment_Profile extends Fragment {
         lang = Paper.book().read("lang", "ar");
         binding.setLang(lang);
         binding.setModel(userModel);
+        binding.setActions(this);
 
 
     }
@@ -82,4 +85,45 @@ public class Fragment_Profile extends Fragment {
     }
 
 
+    @Override
+    public void onAddAd() {
+        if (userModel!=null){
+
+        }else {
+
+        }
+
+        Intent intent = new Intent(activity, AddAdsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onContactUs() {
+
+    }
+
+    @Override
+    public void onMyFavorite() {
+
+    }
+
+    @Override
+    public void onMyAds() {
+
+    }
+
+    @Override
+    public void onCommission() {
+
+    }
+
+    @Override
+    public void onLogout() {
+
+    }
+
+    @Override
+    public void onSetting() {
+
+    }
 }

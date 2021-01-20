@@ -16,12 +16,23 @@ public class DepartmentModel implements Serializable {
     private String updated_at;
     private List<SubCategory> sub_categories;
 
+
+
+
     public int getId() {
         return id;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDesc() {
@@ -110,6 +121,15 @@ public class DepartmentModel implements Serializable {
         private String updated_at;
         private List<CategoryDetail> category_details;
         private boolean isSelected=false;
+
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
 
         public int getId() {
             return id;

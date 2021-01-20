@@ -51,9 +51,6 @@ public class GeneralMethod {
             if (endPoint != null) {
 
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).into(imageView);
-            } else {
-                Picasso.get().load(R.drawable.ic_avatar).into(imageView);
-
             }
         } else if (view instanceof RoundedImageView) {
             RoundedImageView imageView = (RoundedImageView) view;
@@ -61,9 +58,6 @@ public class GeneralMethod {
             if (endPoint != null) {
 
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).fit().into(imageView);
-            } else {
-                Picasso.get().load(R.drawable.ic_avatar).into(imageView);
-
             }
         } else if (view instanceof ImageView) {
             ImageView imageView = (ImageView) view;
@@ -71,9 +65,6 @@ public class GeneralMethod {
             if (endPoint != null) {
 
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).fit().into(imageView);
-            } else {
-                Picasso.get().load(R.drawable.ic_avatar).into(imageView);
-
             }
         }
 

@@ -2,6 +2,8 @@ package com.saudi_sale.activities_fragments.activity_home.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
+import com.saudi_sale.activities_fragments.activity_product_details.ProductDetailsActivity;
 import com.saudi_sale.adapters.ProductAdapter;
 import com.saudi_sale.databinding.FragmentHomeBinding;
 import com.saudi_sale.models.ProductModel;
@@ -49,6 +52,7 @@ public class Fragment_Home extends Fragment {
     private ProductAdapter productAdapter;
     private List<ProductModel> productModelList;
     private LinearLayoutManager manager;
+    private Call<ProductsDataModel> call;
 
 
     public static Fragment_Home newInstance() {
@@ -79,13 +83,13 @@ public class Fragment_Home extends Fragment {
         lang = Paper.book().read("lang", "ar");
         binding.swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         manager = new LinearLayoutManager(activity);
-        productAdapter = new ProductAdapter(productModelList,activity,this);
+        productAdapter = new ProductAdapter(productModelList, activity, this);
         binding.recView.setLayoutManager(manager);
         binding.recView.setAdapter(productAdapter);
         binding.edtSearch.setOnEditorActionListener((textView, i, keyEvent) -> {
-            if (i== EditorInfo.IME_ACTION_SEARCH){
+            if (i == EditorInfo.IME_ACTION_SEARCH) {
                 String query = binding.edtSearch.getText().toString();
-                if (!query.isEmpty()){
+                if (!query.isEmpty()) {
                     productModelList.clear();
                     productAdapter.notifyDataSetChanged();
                     binding.progBar.setVisibility(View.VISIBLE);
@@ -94,11 +98,34 @@ public class Fragment_Home extends Fragment {
             }
             return false;
         });
+        binding.edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().isEmpty()){
+                    productModelList.clear();
+                    productAdapter.notifyDataSetChanged();
+                    binding.swipeRefresh.setRefreshing(false);
+                    binding.progBar.setVisibility(View.VISIBLE);
+                    binding.tvNoData.setVisibility(View.GONE);
+                    getProducts(null);
+                }
+            }
+        });
         getProducts(null);
 
         binding.swipeRefresh.setOnRefreshListener(() -> {
             String query = binding.edtSearch.getText().toString();
-            if (query.isEmpty()){
+            if (query.isEmpty()) {
                 query = null;
             }
             getProducts(query);
@@ -108,76 +135,80 @@ public class Fragment_Home extends Fragment {
 
     }
 
-    private void getProducts(String query){
+    private void getProducts(String query) {
         try {
 
-            Api.getService(Tags.base_url)
-                    .getProducts(query,"no")
-                    .enqueue(new Callback<ProductsDataModel>() {
-                        @Override
-                        public void onResponse(Call<ProductsDataModel> call, Response<ProductsDataModel> response) {
-                            binding.progBar.setVisibility(View.GONE);
-                            binding.swipeRefresh.setRefreshing(false);
-                            if (response.isSuccessful() && response.body() != null ) {
-                                if (response.body().getStatus()==200){
-                                    if (response.body().getData().size()>0){
-                                        productModelList.clear();
-                                        productModelList.addAll(response.body().getData());
-                                        productAdapter.notifyDataSetChanged();
-                                        binding.tvNoData.setVisibility(View.GONE);
-                                    }else {
-                                        binding.tvNoData.setVisibility(View.VISIBLE);
+            if (call!=null){
+                call.cancel();
+            }
 
-                                    }
-                                }else {
-                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                                }
+            call = Api.getService(Tags.base_url)
+                    .getProducts(query, "no");
+            call.enqueue(new Callback<ProductsDataModel>() {
+                @Override
+                public void onResponse(Call<ProductsDataModel> call, Response<ProductsDataModel> response) {
+                    binding.progBar.setVisibility(View.GONE);
+                    binding.swipeRefresh.setRefreshing(false);
+                    if (response.isSuccessful() && response.body() != null) {
+                        if (response.body().getStatus() == 200) {
+                            if (response.body().getData().size() > 0) {
+                                productModelList.clear();
+                                productModelList.addAll(response.body().getData());
+                                productAdapter.notifyDataSetChanged();
+                                binding.tvNoData.setVisibility(View.GONE);
                             } else {
-                                binding.progBar.setVisibility(View.GONE);
-                                binding.swipeRefresh.setRefreshing(false);
+                                binding.tvNoData.setVisibility(View.VISIBLE);
 
-                                if (response.code() == 500) {
-                                    Toast.makeText(activity, "Server Error", Toast.LENGTH_SHORT).show();
-
-
-                                } else {
-                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-
-                                    try {
-
-                                        Log.e("error", response.code() + "_" + response.errorBody().string());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
                             }
+                        } else {
+                            Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        binding.progBar.setVisibility(View.GONE);
+                        binding.swipeRefresh.setRefreshing(false);
 
-                        @Override
-                        public void onFailure(Call<ProductsDataModel> call, Throwable t) {
+                        if (response.code() == 500) {
+                            Toast.makeText(activity, "Server Error", Toast.LENGTH_SHORT).show();
+
+
+                        } else {
+                            Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
                             try {
-                                binding.progBar.setVisibility(View.GONE);
-                                binding.swipeRefresh.setRefreshing(false);
 
-                                if (t.getMessage() != null) {
-                                    Log.e("error", t.getMessage());
-                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                        Toast.makeText(activity, R.string.something, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(activity, t.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-
-                            } catch (Exception e) {
+                                Log.e("error", response.code() + "_" + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
-                    });
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ProductsDataModel> call, Throwable t) {
+                    try {
+                        binding.progBar.setVisibility(View.GONE);
+                        binding.swipeRefresh.setRefreshing(false);
+
+                        if (t.getMessage() != null) {
+                            Log.e("error", t.getMessage());
+                            if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                Toast.makeText(activity, R.string.something, Toast.LENGTH_SHORT).show();
+                            } else if (t.getMessage().toLowerCase().contains("socket")||t.getMessage().toLowerCase().contains("canceled")){
+
+                            }else {
+                                Toast.makeText(activity, t.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                    } catch (Exception e) {
+                    }
+                }
+            });
         } catch (Exception e) {
 
         }
     }
-
-
 
 
     @Override
@@ -185,11 +216,12 @@ public class Fragment_Home extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
 
-
     }
 
 
     public void setProductItemData(ProductModel productModel) {
-
+        Intent intent = new Intent(activity, ProductDetailsActivity.class);
+        intent.putExtra("product_id",productModel.getId());
+        startActivity(intent);
     }
 }

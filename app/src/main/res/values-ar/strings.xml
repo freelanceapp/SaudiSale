@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">سعودي سيل</string>
+    <string name="map_key">AIzaSyA6QI378BHt9eqBbiJKtqWHTSAZxcSwN3Q</string>
     <string name="login">تسجيل دخول</string>
     <string name="code">الكود</string>
     <string name="user_phone">رقم الجوال</string>
@@ -71,5 +72,24 @@
     <string name="departments">الأقسام</string>
     <string name="coupons">الكوبونات</string>
     <string name="photo_sent">تم إرسال صورة</string>
+    <string name="no_image">لا توجد صورة</string>
+    <string name="ad_details">تفاصيل الاعلان</string>
+    <string name="price">السعر</string>
+    <string name="copied">تم النسخ</string>
+    <string name="ad_name">إسم الإعلان</string>
+    <string name="upload_video">تحميل فيديو</string>
+    <string name="ad_price">السعر</string>
+    <string name="address">العنوان</string>
+    <string name="ch_types">إختر نوع الاعلان</string>
+    <string name="ch_ad_image">إختر صور للإعلان</string>
+    <string name="ch_dept">إختر القسم</string>
+    <string name="ch_sub_dept">إختر القسم الفرعي</string>
+    <string name="vid_pem_denied">الوصول للفيديوهات غير مسموح</string>
+    <string name="max_ad_photo">حد اقصى 5 صور</string>
+    <string name="length_video_shouldnot_exceed">مدة الفيديو يجب الا تزيد عن 59 ثانية</string>
+    <string name="add_offer">أضف عرض</string>
+    <string name="price_after_offer">السعر بعد الخصم</string>
+    <string name="offer_value">قيمة العرض</string>
+    <string name="inv_value">قيمة العرض غير صحيحة</string>
 
 </resources>

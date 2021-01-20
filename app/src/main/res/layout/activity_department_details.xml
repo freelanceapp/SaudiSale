@@ -10,8 +10,8 @@
             type="String" />
 
         <variable
-            name="model"
-            type="com.saudi_sale.models.DepartmentModel" />
+            name="title"
+            type="String" />
     </data>
 
     <LinearLayout
@@ -64,7 +64,7 @@
                     android:longClickable="false"
                     android:maxEms="12"
                     android:singleLine="true"
-                    android:text="@{model.title}"
+                    android:text="@{title}"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -72,12 +72,24 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recViewSubDepartment"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            />
+            >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recViewSubDepartment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                />
+            <ProgressBar
+                android:id="@+id/progBarType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="70dp"
+                />
+        </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -95,7 +107,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="70dp"
+                android:visibility="gone"
                 />
+
 
             <TextView
                 android:id="@+id/tvNoData"
