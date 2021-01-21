@@ -115,8 +115,7 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     @Override
     public void onMyAds() {
-        Intent intent = new Intent(activity, MyCouponsActivity.class);
-        startActivity(intent);
+
     }
 
     @Override

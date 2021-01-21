@@ -271,10 +271,7 @@ public interface Service {
     );
 
     @POST("api/logout")
-    Call<StatusResponse> logout(@Header("Authorization") String user_token
-
-
-    );
+    Call<StatusResponse> logout(@Header("Authorization") String user_token);
 
 
 }

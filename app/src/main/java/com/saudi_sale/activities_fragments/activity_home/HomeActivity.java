@@ -29,6 +29,7 @@ import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Home
 import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Offer;
 import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Profile;
 import com.saudi_sale.activities_fragments.activity_login.LoginActivity;
+import com.saudi_sale.activities_fragments.activity_my_coupon.MyCouponsActivity;
 import com.saudi_sale.adapters.ExpandDepartmentAdapter;
 import com.saudi_sale.databinding.ActivityHomeBinding;
 import com.saudi_sale.language.Language;
@@ -131,6 +132,11 @@ public class HomeActivity extends AppCompatActivity {
         binding.flChat.setOnClickListener(v -> {
             displayFragmentChat();
 
+        });
+
+        binding.llCoupon.setOnClickListener(view -> {
+            Intent intent = new Intent(this, MyCouponsActivity.class);
+            startActivity(intent);
         });
         binding.flOffer.setOnClickListener(v -> {
             displayFragmentOffer();
