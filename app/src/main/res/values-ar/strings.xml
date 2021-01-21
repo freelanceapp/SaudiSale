@@ -102,5 +102,7 @@
     <string name="select">إختر</string>
     <string name="suc">تم بنجاح!</string>
     <string name="coupon_valid">هل الكوبون يعمل؟</string>
+    <string name="already_read">لقد قرأت القسم</string>
+    <string name="done">تم</string>
 
 </resources>

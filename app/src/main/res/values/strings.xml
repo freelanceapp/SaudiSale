@@ -103,5 +103,7 @@
     <string name="select">Select</string>
     <string name="suc">Success!</string>
     <string name="coupon_valid">Coupon valid?</string>
+    <string name="already_read">Already read</string>
+    <string name="done">Done</string>
 
 </resources>

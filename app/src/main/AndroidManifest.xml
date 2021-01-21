@@ -24,7 +24,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".activities_fragments.activity_coupon_details.CouponDetailsActivity"></activity>
+        <activity android:name=".activities_fragments.activite_swear.SwearActivity"></activity>
+        <activity android:name=".activities_fragments.activity_coupon_details.CouponDetailsActivity" />
         <activity
             android:name=".activities_fragments.activity_my_coupon.MyCouponsActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
