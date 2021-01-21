@@ -20,7 +20,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.saudi_sale.R;
@@ -36,7 +35,7 @@ import com.saudi_sale.language.Language;
 import com.saudi_sale.models.DepartmentDataModel;
 import com.saudi_sale.models.DepartmentModel;
 import com.saudi_sale.models.NotFireModel;
-import com.saudi_sale.models.ProductsDataModel;
+import com.saudi_sale.models.StatusResponse;
 import com.saudi_sale.models.UserModel;
 import com.saudi_sale.preferences.Preferences;
 import com.saudi_sale.remote.Api;
@@ -52,7 +51,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.paperdb.Paper;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -469,19 +467,25 @@ public class HomeActivity extends AppCompatActivity {
 
     private void updateTokenFireBase() {
 
-      /*  FirebaseInstanceId.getInstance()
+        FirebaseInstanceId.getInstance()
                 .getInstanceId().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                token = task.getResult().getToken();
+                String token = task.getResult().getToken();
 
                 try {
                     Api.getService(Tags.base_url)
-                            .updatePhoneToken(userModel.getUser().getToken(), token, "android")
-                            .enqueue(new Callback<ResponseBody>() {
+                            .updateFirebaseToken(token,userModel.getData().getId(), "android")
+                            .enqueue(new Callback<StatusResponse>() {
                                 @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
                                     if (response.isSuccessful() && response.body() != null) {
-                                        Log.e("token", "updated successfully");
+
+                                        if (response.body().getStatus()==200){
+                                            userModel.getData().setFirebaseToken(token);
+                                            preferences.create_update_userdata(HomeActivity.this,userModel);
+                                            Log.e("token", "updated successfully");
+
+                                        }
                                     } else {
                                         try {
 
@@ -493,7 +497,7 @@ public class HomeActivity extends AppCompatActivity {
                                 }
 
                                 @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                public void onFailure(Call<StatusResponse> call, Throwable t) {
                                     try {
 
                                         if (t.getMessage() != null) {
@@ -515,81 +519,120 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
             }
-        });*/
+        });
     }
 
-    public void logout() {
-        if (userModel != null) {
+    public void deleteFirebaseToken(){
+        if (userModel==null){
+            navigateToSignInActivity();
 
-
-           /* ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        }else {
+            ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(true);
             dialog.show();
 
+            Api.getService(Tags.base_url)
+                    .deleteFirebaseToken(userModel.getData().getFirebaseToken(),userModel.getData().getId())
+                    .enqueue(new Callback<StatusResponse>() {
+                        @Override
+                        public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
+                            if (response.isSuccessful()&&response.body()!=null) {
 
-            FirebaseInstanceId.getInstance()
-                    .getInstanceId().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    token = task.getResult().getToken();
+                                if (response.body().getStatus()==200){
+                                    logout(dialog);
+                                }else {
+                                    Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
 
-                    Api.getService(Tags.base_url)
-                            .logout(userModel.getUser().getToken(), token, "android")
-                            .enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    dialog.dismiss();
-                                    if (response.isSuccessful()) {
-                                        Log.e("dd", "ddd");
-                                        preferences.clear(HomeActivity.this);
-                                        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                        if (manager != null) {
-                                            manager.cancel(Tags.not_tag, Tags.not_id);
-                                        }
-                                        navigateToSignInActivity();
+                            } else {
+                                dialog.dismiss();
+                                try {
+                                    Log.e("error", response.code() + "__" + response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
 
+                                if (response.code() == 500) {
+                                    Toast.makeText(HomeActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
 
+                        @Override
+                        public void onFailure(Call<StatusResponse> call, Throwable t) {
+                            try {
+                                dialog.dismiss();
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage() + "__");
+
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(HomeActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
                                     } else {
-                                        dialog.dismiss();
-                                        try {
-                                            Log.e("error", response.code() + "__" + response.errorBody().string());
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                        if (response.code() == 500) {
-                                            Toast.makeText(HomeActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                     }
                                 }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    try {
-                                        dialog.dismiss();
-                                        if (t.getMessage() != null) {
-                                            Log.e("error", t.getMessage() + "__");
-
-                                            if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                                Toast.makeText(HomeActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    } catch (Exception e) {
-                                        Log.e("Error", e.getMessage() + "__");
-                                    }
-                                }
-                            });
-
-                }
-            });*/
-
-
-        } else {
-            navigateToSignInActivity();
+                            } catch (Exception e) {
+                                Log.e("Error", e.getMessage() + "__");
+                            }
+                        }
+                    });
         }
 
+    }
+    private void logout(ProgressDialog dialog)
+    {
+        Api.getService(Tags.base_url)
+                .logout("Bearer "+userModel.getData().getToken())
+                .enqueue(new Callback<StatusResponse>() {
+                    @Override
+                    public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            preferences.clear(HomeActivity.this);
+                            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                            if (manager != null) {
+                                manager.cancel(Tags.not_tag, Tags.not_id);
+                            }
+                            navigateToSignInActivity();
+
+
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error", response.code() + "__" + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (response.code() == 500) {
+                                Toast.makeText(HomeActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<StatusResponse> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(HomeActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage() + "__");
+                        }
+                    }
+                });
     }
 
     public void refreshActivity(String lang) {

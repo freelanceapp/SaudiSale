@@ -92,5 +92,16 @@
     <string name="price_after_offer">Price after offer</string>
     <string name="offer_value">Offer value</string>
     <string name="inv_value">Invalid value</string>
+    <string name="coupon_name">Coupon name</string>
+    <string name="brand_name">Brand name</string>
+    <string name="coupon_code">Coupon code</string>
+    <string name="coupon_date">Coupon date</string>
+    <string name="show">Show</string>
+    <string name="ch_image">Choose image</string>
+    <string name="add_coupon">Add Coupon</string>
+    <string name="my_coupons">My Coupons</string>
+    <string name="select">Select</string>
+    <string name="suc">Success!</string>
+    <string name="coupon_valid">Coupon valid?</string>
 
 </resources>

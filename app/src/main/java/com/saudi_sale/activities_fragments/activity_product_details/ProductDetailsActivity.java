@@ -98,10 +98,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
         sliderAdapter = new SliderAdapter(productImageModelList, this);
         binding.pager.setAdapter(sliderAdapter);
 
-        binding.checkFavorite.setOnClickListener(view ->{
-            if (binding.checkFavorite.isChecked()){
+        binding.checkFavorite.setOnClickListener(view -> {
+            if (binding.checkFavorite.isChecked()) {
                 like_dislike(true);
-            }else {
+            } else {
                 like_dislike(false);
 
             }
@@ -129,9 +129,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
             startActivity(i);
         });
         binding.imgWarning.setOnClickListener(view -> {
-            if (productModel.getIs_report().equals("yes")){
+            if (productModel.getIs_report().equals("yes")) {
                 addReport(true);
-            }else {
+            } else {
                 addReport(false);
 
             }
@@ -161,15 +161,15 @@ public class ProductDetailsActivity extends AppCompatActivity {
                             binding.progBar.setVisibility(View.GONE);
                             if (response.isSuccessful()) {
 
-                                if (response.body().getStatus()==200){
-                                    if (response.body().getData()!=null){
+                                if (response.body().getStatus() == 200) {
+                                    if (response.body().getData() != null) {
                                         productModel = response.body().getData();
                                         if (productModel != null) {
                                             updateUi();
                                         }
                                     }
 
-                                }else {
+                                } else {
                                     Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
 
@@ -229,23 +229,22 @@ public class ProductDetailsActivity extends AppCompatActivity {
         }
 
 
-
         if (productModel.getProduct_details() != null && productModel.getProduct_details().size() > 0) {
             productDetailsModelList.addAll(productModel.getProduct_details());
             adapter.notifyDataSetChanged();
         }
 
-        if (productModel.getIs_favorite().equals("yes")){
+        if (productModel.getIs_favorite().equals("yes")) {
             binding.checkFavorite.setChecked(true);
-        }else {
+        } else {
             binding.checkFavorite.setChecked(false);
 
         }
 
-        if (productModel.getIs_report().equals("yes")){
-            binding.imgWarning.setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary));
-        }else {
-            binding.imgWarning.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
+        if (productModel.getIs_report().equals("yes")) {
+            binding.imgWarning.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary));
+        } else {
+            binding.imgWarning.setColorFilter(ContextCompat.getColor(this, R.color.gray4));
 
         }
 
@@ -271,131 +270,154 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
     }
 
-    public void like_dislike(boolean isChecked)
-    {
-        if (userModel != null) {
-            try {
-                Api.getService(Tags.base_url)
-                        .like_disliked("Bearer "+userModel.getData().getToken(), product_id )
-                        .enqueue(new Callback<StatusResponse>() {
-                            @Override
-                            public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
-                                if (response.isSuccessful()) {
-                                    if (response.body().getStatus()==200){
-                                        if (isChecked){
-                                            productModel.setIs_favorite("yes");
-                                            binding.checkFavorite.setChecked(true);
+    public void like_dislike(boolean isChecked) {
+        if (userModel == null) {
+            if (isChecked) {
+                binding.checkFavorite.setChecked(false);
+                productModel.setIs_favorite("no");
 
-                                        }else {
-                                            productModel.setIs_favorite("no");
-
-                                            binding.checkFavorite.setChecked(false);
-
-                                        }
-                                    }else {
-
-                                        if (isChecked){
-                                            binding.checkFavorite.setChecked(false);
-                                            productModel.setIs_favorite("no");
+            } else {
+                binding.checkFavorite.setChecked(true);
+                productModel.setIs_favorite("yes");
 
 
-                                        }else {
-                                            binding.checkFavorite.setChecked(true);
-                                            productModel.setIs_favorite("yes");
+            }
+            Toast.makeText(this, getString(R.string.please_sign_in_or_sign_up), Toast.LENGTH_SHORT).show();
 
+            return;
+        }
 
-                                        }
+        try {
+            Api.getService(Tags.base_url)
+                    .like_disliked("Bearer " + userModel.getData().getToken(), product_id)
+                    .enqueue(new Callback<StatusResponse>() {
+                        @Override
+                        public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
+                            if (response.isSuccessful()) {
+                                if (response.body().getStatus() == 200) {
+                                    if (isChecked) {
+                                        productModel.setIs_favorite("yes");
+                                        binding.checkFavorite.setChecked(true);
 
-                                        Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        productModel.setIs_favorite("no");
+
+                                        binding.checkFavorite.setChecked(false);
 
                                     }
                                 } else {
 
-                                    if (isChecked){
+                                    if (isChecked) {
                                         binding.checkFavorite.setChecked(false);
                                         productModel.setIs_favorite("no");
 
-                                    }else {
+
+                                    } else {
                                         binding.checkFavorite.setChecked(true);
                                         productModel.setIs_favorite("yes");
 
 
                                     }
-                                    if (response.code() == 500) {
-                                        Toast.makeText(ProductDetailsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+
+                                    Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                }
+                            } else {
+
+                                if (isChecked) {
+                                    binding.checkFavorite.setChecked(false);
+                                    productModel.setIs_favorite("no");
+
+                                } else {
+                                    binding.checkFavorite.setChecked(true);
+                                    productModel.setIs_favorite("yes");
 
 
+                                }
+                                if (response.code() == 500) {
+                                    Toast.makeText(ProductDetailsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+
+
+                                } else {
+                                    Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                    try {
+
+                                        Log.e("error", response.code() + "_" + response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<StatusResponse> call, Throwable t) {
+                            try {
+                                if (isChecked) {
+                                    binding.checkFavorite.setChecked(false);
+
+                                } else {
+                                    binding.checkFavorite.setChecked(true);
+
+                                }
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage());
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(ProductDetailsActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-
-                                        try {
-
-                                            Log.e("error", response.code() + "_" + response.errorBody().string());
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+                                        Toast.makeText(ProductDetailsActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
+
+                            } catch (Exception e) {
                             }
-
-                            @Override
-                            public void onFailure(Call<StatusResponse> call, Throwable t) {
-                                try {
-                                    if (isChecked){
-                                        binding.checkFavorite.setChecked(false);
-
-                                    }else {
-                                        binding.checkFavorite.setChecked(true);
-
-                                    }
-                                    if (t.getMessage() != null) {
-                                        Log.e("error", t.getMessage());
-                                        if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                            Toast.makeText(ProductDetailsActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(ProductDetailsActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-
-                                } catch (Exception e) {
-                                }
-                            }
-                        });
-            } catch (Exception e) {
-            }
+                        }
+                    });
+        } catch (Exception e) {
         }
 
     }
 
-    public void addReport(boolean isReport)
-    {
+    public void addReport(boolean isReport) {
 
-        if (userModel != null) {
+        if (userModel == null) {
+            if (isReport) {
+                productModel.setIs_report("yes");
+
+
+            } else {
+                productModel.setIs_report("no");
+
+            }
+            Toast.makeText(this, getString(R.string.please_sign_in_or_sign_up), Toast.LENGTH_SHORT).show();
+            return;
+        }
             try {
                 Api.getService(Tags.base_url)
-                        .report("Bearer "+userModel.getData().getToken(), product_id ,"")
+                        .report("Bearer " + userModel.getData().getToken(), product_id, "")
                         .enqueue(new Callback<StatusResponse>() {
                             @Override
                             public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
                                 if (response.isSuccessful()) {
-                                    if (response.body().getStatus()==200){
-                                        if (isReport){
+                                    if (response.body().getStatus() == 200) {
+                                        if (isReport) {
                                             productModel.setIs_report("no");
                                             binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.gray4));
 
 
-                                        }else {
+                                        } else {
                                             productModel.setIs_report("yes");
                                             binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.colorPrimary));
 
                                         }
-                                    }else {
+                                    } else {
 
-                                        if (isReport){
+                                        if (isReport) {
                                             productModel.setIs_report("yes");
 
 
-                                        }else {
+                                        } else {
                                             productModel.setIs_report("no");
 
                                         }
@@ -405,12 +427,12 @@ public class ProductDetailsActivity extends AppCompatActivity {
                                     }
                                 } else {
 
-                                    if (isReport){
+                                    if (isReport) {
                                         productModel.setIs_report("yes");
                                         binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.colorPrimary));
 
 
-                                    }else {
+                                    } else {
                                         productModel.setIs_report("no");
                                         binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.gray4));
 
@@ -436,12 +458,12 @@ public class ProductDetailsActivity extends AppCompatActivity {
                             @Override
                             public void onFailure(Call<StatusResponse> call, Throwable t) {
                                 try {
-                                    if (isReport){
+                                    if (isReport) {
                                         productModel.setIs_report("yes");
                                         binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.colorPrimary));
 
 
-                                    }else {
+                                    } else {
                                         productModel.setIs_report("no");
                                         binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.gray4));
 
@@ -462,7 +484,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                         });
             } catch (Exception e) {
             }
-        }
+
 
 
     }

@@ -393,4 +393,12 @@ public class AddAdsModel extends BaseObservable implements Serializable {
 
         return valid;
     }
+
+    public List<Integer> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<Integer> types) {
+        this.types = types;
+    }
 }

@@ -24,20 +24,27 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-
-        <activity android:name=".activities_fragments.activity_add_ads.AddAdsActivity"
+        <activity android:name=".activities_fragments.activity_coupon_details.CouponDetailsActivity"></activity>
+        <activity
+            android:name=".activities_fragments.activity_my_coupon.MyCouponsActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
-
-        <activity android:name=".activities_fragments.activity_product_details.ProductDetailsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_add_coupon.AddCouponActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
-        <activity android:name=".activities_fragments.activity_department_details.DepartmentDetailsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_add_ads.AddAdsActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_product_details.ProductDetailsActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_department_details.DepartmentDetailsActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_home.HomeActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"

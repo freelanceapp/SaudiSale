@@ -80,6 +80,7 @@ import com.saudi_sale.models.ItemAddAdsDataModel;
 import com.saudi_sale.models.PlaceGeocodeData;
 import com.saudi_sale.models.PlaceMapDetailsData;
 import com.saudi_sale.models.SpinnerTypeAdapter;
+import com.saudi_sale.models.StatusResponse;
 import com.saudi_sale.models.TypeDataModel;
 import com.saudi_sale.models.TypeModel;
 import com.saudi_sale.models.UserModel;
@@ -91,10 +92,13 @@ import com.saudi_sale.tags.Tags;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.paperdb.Paper;
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -333,11 +337,11 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
         });
 
         binding.checkboxOffer.setOnClickListener(view -> {
-            if (binding.checkboxOffer.isChecked()){
+            if (binding.checkboxOffer.isChecked()) {
                 model.setHave_offer("with_offer");
                 binding.expandLayout2.expand(true);
 
-            }else {
+            } else {
                 model.setHave_offer("without_offer");
                 binding.expandLayout2.collapse(true);
 
@@ -360,7 +364,7 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
         List<ItemAddAds> itemAddAdsList = new ArrayList<>();
         for (ItemAddAds itemAddAds : this.itemAddAdsList) {
             itemAddAds.setValue_of_attribute("");
-            Log.e("title",itemAddAds.getTitle_of_attribute()+"__");
+            Log.e("title", itemAddAds.getTitle_of_attribute() + "__");
             ItemAddAdsBinding itemAddAdsBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.item_add_ads, null, false);
             itemAddAdsBinding.tvTitle.setText(itemAddAds.getTitle_of_attribute());
             itemAddAdsBinding.edt.setHint(itemAddAds.getTitle_of_attribute());
@@ -620,32 +624,50 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void addAdsWithoutVideoWithList() {
-    /*    ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
-        RequestBody id_part = Common.getRequestBodyText(String.valueOf(userModel.getData().getId()));
         RequestBody title_part = Common.getRequestBodyText(model.getName());
-        RequestBody department_id_part = Common.getRequestBodyText(String.valueOf(model.getDepartment_id()));
-        RequestBody price_part = Common.getRequestBodyText(model.getPrice());
-        RequestBody details_part = Common.getRequestBodyText(model.getDetails());
+        RequestBody category_id_part = Common.getRequestBodyText(String.valueOf(model.getCategory_id()));
+        RequestBody sub_category_id_part = Common.getRequestBodyText(String.valueOf(model.getSub_category_id()));
+
+        RequestBody old_price_part = Common.getRequestBodyText(model.getOld_price());
+        RequestBody have_offer_part = Common.getRequestBodyText(model.getHave_offer());
+
+        RequestBody offer_price_part;
+        RequestBody offer_value_part;
+        if (model.getHave_offer().equals("with_offer")){
+            offer_price_part = Common.getRequestBodyText(model.getPrice());
+            offer_value_part = Common.getRequestBodyText(model.getOffer_value());
+
+        }else {
+            offer_price_part = Common.getRequestBodyText(model.getOld_price());
+            offer_value_part = Common.getRequestBodyText("0");
+
+        }
         RequestBody address_part = Common.getRequestBodyText(model.getAddress());
         RequestBody lat_part = Common.getRequestBodyText(String.valueOf(model.getLat()));
         RequestBody lng_part = Common.getRequestBodyText(String.valueOf(model.getLng()));
+        MultipartBody.Part main_image_part = Common.getMultiPart(this,Uri.parse(imagesUriList.get(0)),"main_image");
 
+        List<RequestBody> types = new ArrayList<>();;
+        if (selectedType.size()>0){
+            RequestBody  requestBody = Common.getRequestBodyText(selectedType.get(0).toString()) ;
+            types.add(requestBody);
+        }
         Map<String, RequestBody> map = new HashMap<>();
         for (int index=0;index<model.getItemAddAdsList().size();index++){
-            map.put("product_details["+index+"][title]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getTitle()));
-            map.put("product_details["+index+"][icon]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getIcon()));
-            map.put("product_details["+index+"][content]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getContent()));
+            map.put("product_details["+index+"][title_of_attribute]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getTitle_of_attribute()));
+            map.put("product_details["+index+"][value_of_attribute]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getValue_of_attribute()));
 
         }
 
 
         Api.getService(Tags.base_url)
-                .addAdsWithoutVideoWithList(title_part,department_id_part,price_part,id_part,details_part,address_part,lat_part,lng_part,getMultipartImage(),map)
-                .enqueue(new Callback<ResponseBody>() {
+                .addAdsWithoutVideoWithList("Bearer "+userModel.getData().getToken(),category_id_part,sub_category_id_part,title_part,offer_price_part,old_price_part,address_part,lat_part,lng_part,have_offer_part,offer_value_part,main_image_part,getMultipartImage(),types,map)
+                .enqueue(new Callback<StatusResponse>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
                         dialog.dismiss();
                         if (response.isSuccessful() && response.body() != null) {
                             finish();
@@ -657,57 +679,79 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
                             }
 
                             if (response.code() == 500) {
-                                Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddAdsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
                             }{
                                 Log.e("mmmmmmmmmm",response.code()+"__"+response.errorBody());
 
-                                Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<StatusResponse> call, Throwable t) {
                         try {
                             dialog.dismiss();
                             if (t.getMessage() != null) {
                                 Log.e("mmmmmmmmmm",t.getMessage()+"__");
 
                                 if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AddAdsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
                                 } else {
                                     Log.e("ccccc",t.getMessage());
 
-                                    Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         } catch (Exception e) {
                             Log.e("Error", e.getMessage() + "__");
                         }
                     }
-                });*/
+                });
     }
 
-    private void addAdsWithVideoWithoutList() {
-       /* ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+    private void addAdsWithVideoWithoutList()
+    {
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
-        RequestBody id_part = Common.getRequestBodyText(String.valueOf(userModel.getUser().getId()));
         RequestBody title_part = Common.getRequestBodyText(model.getName());
-        RequestBody department_id_part = Common.getRequestBodyText(String.valueOf(model.getDepartment_id()));
-        RequestBody price_part = Common.getRequestBodyText(model.getPrice());
-        RequestBody details_part = Common.getRequestBodyText(model.getDetails());
+        RequestBody category_id_part = Common.getRequestBodyText(String.valueOf(model.getCategory_id()));
+        RequestBody sub_category_id_part = Common.getRequestBodyText(String.valueOf(model.getSub_category_id()));
+
+        RequestBody old_price_part = Common.getRequestBodyText(model.getOld_price());
+        RequestBody have_offer_part = Common.getRequestBodyText(model.getHave_offer());
+
+        RequestBody offer_price_part;
+        RequestBody offer_value_part;
+        if (model.getHave_offer().equals("with_offer")){
+            offer_price_part = Common.getRequestBodyText(model.getPrice());
+            offer_value_part = Common.getRequestBodyText(model.getOffer_value());
+
+        }else {
+            offer_price_part = Common.getRequestBodyText(model.getOld_price());
+            offer_value_part = Common.getRequestBodyText("0");
+
+        }
         RequestBody address_part = Common.getRequestBodyText(model.getAddress());
         RequestBody lat_part = Common.getRequestBodyText(String.valueOf(model.getLat()));
         RequestBody lng_part = Common.getRequestBodyText(String.valueOf(model.getLng()));
-        MultipartBody.Part video = Common.getMultiPartVideo(this, videoUri, "vedio");
+        MultipartBody.Part main_image_part = Common.getMultiPart(this,Uri.parse(imagesUriList.get(0)),"main_image");
+        MultipartBody.Part video_part = Common.getMultiPartVideo(this,videoUri,"video");
+
+        List<RequestBody> types = new ArrayList<>();;
+        if (selectedType.size()>0){
+            RequestBody  requestBody = Common.getRequestBodyText(selectedType.get(0).toString()) ;
+            types.add(requestBody);
+        }
+
 
 
         Api.getService(Tags.base_url)
-                .addAdsWithVideoWithoutList(title_part,department_id_part,price_part,id_part,details_part,address_part,lat_part,lng_part,getMultipartImage(),video)
-                .enqueue(new Callback<ResponseBody>() {
+                .addAdsWithVideoWithoutList("Bearer "+userModel.getData().getToken(),category_id_part,sub_category_id_part,title_part,offer_price_part,old_price_part,address_part,lat_part,lng_part,have_offer_part,offer_value_part,main_image_part,video_part,getMultipartImage(),types)
+                .enqueue(new Callback<StatusResponse>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
                         dialog.dismiss();
                         if (response.isSuccessful() && response.body() != null) {
                             finish();
@@ -719,53 +763,78 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
                             }
 
                             if (response.code() == 500) {
-                                Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddAdsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
                             }{
-                                Log.e("error",response.code()+"cccccccc"+response.errorBody());
+                                Log.e("mmmmmmmmmm",response.code()+"__"+response.errorBody());
 
-                                Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<StatusResponse> call, Throwable t) {
                         try {
                             dialog.dismiss();
                             if (t.getMessage() != null) {
+                                Log.e("mmmmmmmmmm",t.getMessage()+"__");
 
                                 if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AddAdsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    Log.e("ccccc",t.getMessage());
+
+                                    Toast.makeText(AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         } catch (Exception e) {
                             Log.e("Error", e.getMessage() + "__");
                         }
                     }
-                });*/
+                });
+
     }
 
-    private void addAdsWithoutVideoWithoutList() {
-      /*  ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+    private void addAdsWithoutVideoWithoutList()
+    {
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
-        RequestBody id_part = Common.getRequestBodyText(String.valueOf(userModel.getUser().getId()));
         RequestBody title_part = Common.getRequestBodyText(model.getName());
-        RequestBody department_id_part = Common.getRequestBodyText(String.valueOf(model.getDepartment_id()));
-        RequestBody price_part = Common.getRequestBodyText(model.getPrice());
-        RequestBody details_part = Common.getRequestBodyText(model.getDetails());
+        RequestBody category_id_part = Common.getRequestBodyText(String.valueOf(model.getCategory_id()));
+        RequestBody sub_category_id_part = Common.getRequestBodyText(String.valueOf(model.getSub_category_id()));
+
+        RequestBody old_price_part = Common.getRequestBodyText(model.getOld_price());
+        RequestBody have_offer_part = Common.getRequestBodyText(model.getHave_offer());
+
+        RequestBody offer_price_part;
+        RequestBody offer_value_part;
+        if (model.getHave_offer().equals("with_offer")){
+            offer_price_part = Common.getRequestBodyText(model.getPrice());
+            offer_value_part = Common.getRequestBodyText(model.getOffer_value());
+
+        }else {
+            offer_price_part = Common.getRequestBodyText(model.getOld_price());
+            offer_value_part = Common.getRequestBodyText("0");
+
+        }
         RequestBody address_part = Common.getRequestBodyText(model.getAddress());
         RequestBody lat_part = Common.getRequestBodyText(String.valueOf(model.getLat()));
         RequestBody lng_part = Common.getRequestBodyText(String.valueOf(model.getLng()));
+        MultipartBody.Part main_image_part = Common.getMultiPart(this,Uri.parse(imagesUriList.get(0)),"main_image");
+
+        List<RequestBody> types = new ArrayList<>();;
+        if (selectedType.size()>0){
+            RequestBody  requestBody = Common.getRequestBodyText(selectedType.get(0).toString()) ;
+            types.add(requestBody);
+        }
 
 
         Api.getService(Tags.base_url)
-                .addAdsWithoutVideoWithoutList(title_part,department_id_part,price_part,id_part,details_part,address_part,lat_part,lng_part,getMultipartImage())
-                .enqueue(new Callback<ResponseBody>() {
+                .addAdsWithoutVideoWithoutList("Bearer "+userModel.getData().getToken(),category_id_part,sub_category_id_part,title_part,offer_price_part,old_price_part,address_part,lat_part,lng_part,have_offer_part,offer_value_part,main_image_part,getMultipartImage(),types)
+                .enqueue(new Callback<StatusResponse>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
                         dialog.dismiss();
                         if (response.isSuccessful() && response.body() != null) {
                             finish();
@@ -777,97 +846,128 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
                             }
 
                             if (response.code() == 500) {
-                                Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddAdsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
                             }{
-                                Log.e("bbbbbbbb",response.code()+"__"+response.errorBody());
+                                Log.e("mmmmmmmmmm",response.code()+"__"+response.errorBody());
 
-                                Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<StatusResponse> call, Throwable t) {
                         try {
                             dialog.dismiss();
                             if (t.getMessage() != null) {
+                                Log.e("mmmmmmmmmm",t.getMessage()+"__");
 
                                 if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AddAdsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    Log.e("ccccc",t.getMessage());
+
+                                    Toast.makeText(AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         } catch (Exception e) {
                             Log.e("Error", e.getMessage() + "__");
                         }
                     }
-                });*/
+                });
     }
 
-    private void addAdsWithVideoWithList() {
-//        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
-//        dialog.setCancelable(false);
-//        dialog.show();
-//        RequestBody id_part = Common.getRequestBodyText(String.valueOf(userModel.getUser().getId()));
-//        RequestBody title_part = Common.getRequestBodyText(model.getName());
-//        RequestBody department_id_part = Common.getRequestBodyText(String.valueOf(model.getDepartment_id()));
-//        RequestBody price_part = Common.getRequestBodyText(model.getPrice());
-//        RequestBody details_part = Common.getRequestBodyText(model.getDetails());
-//        RequestBody address_part = Common.getRequestBodyText(model.getAddress());
-//        RequestBody lat_part = Common.getRequestBodyText(String.valueOf(model.getLat()));
-//        RequestBody lng_part = Common.getRequestBodyText(String.valueOf(model.getLng()));
-//        MultipartBody.Part video = Common.getMultiPartVideo(this, videoUri, "vedio");
-//        Map<String, RequestBody> map = new HashMap<>();
-//        for (int index=0;index<model.getItemAddAdsList().size();index++){
-//            map.put("product_details["+index+"][title]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getTitle()));
-//            map.put("product_details["+index+"][icon]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getIcon()));
-//            map.put("product_details["+index+"][content]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getContent()));
-//
-//        }
-//
-//        Api.getService(Tags.base_url)
-//                .addAdsWithVideoWithList(title_part,department_id_part,price_part,id_part,details_part,address_part,lat_part,lng_part,video,getMultipartImage(),map)
-//                .enqueue(new Callback<ResponseBody>() {
-//                    @Override
-//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                        dialog.dismiss();
-//                        if (response.isSuccessful() && response.body() != null) {
-//                            finish();
-//                        } else {
-//                            try {
-//                                Log.e("error",response.code()+"__"+response.errorBody().string());
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                            if (response.code() == 500) {
-//                                Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-//                            }{
-//                                Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                        try {
-//                            dialog.dismiss();
-//                            if (t.getMessage() != null) {
-//
-//                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-//                                    Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-//                                } else {
-//                                    Toast.makeText(com.souqelebel.activities_fragments.activity_add_ads.AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        } catch (Exception e) {
-//                            Log.e("Error", e.getMessage() + "__");
-//                        }
-//                    }
-//                });
+    private void addAdsWithVideoWithList()
+    {
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.show();
+        RequestBody title_part = Common.getRequestBodyText(model.getName());
+        RequestBody category_id_part = Common.getRequestBodyText(String.valueOf(model.getCategory_id()));
+        RequestBody sub_category_id_part = Common.getRequestBodyText(String.valueOf(model.getSub_category_id()));
+
+        RequestBody old_price_part = Common.getRequestBodyText(model.getOld_price());
+        RequestBody have_offer_part = Common.getRequestBodyText(model.getHave_offer());
+
+        RequestBody offer_price_part;
+        RequestBody offer_value_part;
+        if (model.getHave_offer().equals("with_offer")){
+            offer_price_part = Common.getRequestBodyText(model.getPrice());
+            offer_value_part = Common.getRequestBodyText(model.getOffer_value());
+
+        }else {
+            offer_price_part = Common.getRequestBodyText(model.getOld_price());
+            offer_value_part = Common.getRequestBodyText("0");
+
+        }
+        RequestBody address_part = Common.getRequestBodyText(model.getAddress());
+        RequestBody lat_part = Common.getRequestBodyText(String.valueOf(model.getLat()));
+        RequestBody lng_part = Common.getRequestBodyText(String.valueOf(model.getLng()));
+        MultipartBody.Part main_image_part = Common.getMultiPart(this,Uri.parse(imagesUriList.get(0)),"main_image");
+        MultipartBody.Part video_part = Common.getMultiPartVideo(this,videoUri,"video");
+
+        List<RequestBody> types = new ArrayList<>();;
+        if (selectedType.size()>0){
+            RequestBody  requestBody = Common.getRequestBodyText(selectedType.get(0).toString()) ;
+            types.add(requestBody);
+        }
+        Map<String, RequestBody> map = new HashMap<>();
+        for (int index=0;index<model.getItemAddAdsList().size();index++){
+            map.put("product_details["+index+"][title_of_attribute]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getTitle_of_attribute()));
+            map.put("product_details["+index+"][value_of_attribute]",Common.getRequestBodyText(model.getItemAddAdsList().get(index).getValue_of_attribute()));
+
+        }
+
+
+        Api.getService(Tags.base_url)
+                .addAdsWithVideoWithList("Bearer "+userModel.getData().getToken(),category_id_part,sub_category_id_part,title_part,offer_price_part,old_price_part,address_part,lat_part,lng_part,have_offer_part,offer_value_part,main_image_part,video_part,getMultipartImage(),types,map)
+                .enqueue(new Callback<StatusResponse>() {
+                    @Override
+                    public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful() && response.body() != null) {
+                            finish();
+                        } else {
+                            try {
+                                Log.e("error",response.code()+"__"+response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (response.code() == 500) {
+                                Toast.makeText(AddAdsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            }{
+                                Log.e("mmmmmmmmmm",response.code()+"__"+response.errorBody());
+
+                                Toast.makeText(AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<StatusResponse> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("mmmmmmmmmm",t.getMessage()+"__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(AddAdsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Log.e("ccccc",t.getMessage());
+
+                                    Toast.makeText(AddAdsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage() + "__");
+                        }
+                    }
+                });
     }
 
-    private List<MultipartBody.Part> getMultipartImage() {
+    private List<MultipartBody.Part> getMultipartImage()
+    {
         List<MultipartBody.Part> parts = new ArrayList<>();
         for (String path : imagesUriList) {
             Uri uri = Uri.parse(path);

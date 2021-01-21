@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.activity_add_ads.AddAdsActivity;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
+import com.saudi_sale.activities_fragments.activity_my_coupon.MyCouponsActivity;
 import com.saudi_sale.databinding.FragmentProfileBinding;
 import com.saudi_sale.interfaces.Listeners;
 import com.saudi_sale.models.UserModel;
@@ -88,13 +90,13 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
     @Override
     public void onAddAd() {
         if (userModel!=null){
-
+            Intent intent = new Intent(activity, AddAdsActivity.class);
+            startActivity(intent);
         }else {
-
+            Toast.makeText(activity, getString(R.string.please_sign_in_or_sign_up), Toast.LENGTH_SHORT).show();
         }
 
-        Intent intent = new Intent(activity, AddAdsActivity.class);
-        startActivity(intent);
+
     }
 
     @Override
@@ -104,12 +106,17 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     @Override
     public void onMyFavorite() {
+        if (userModel!=null){
 
+        }else {
+            Toast.makeText(activity, getString(R.string.please_sign_in_or_sign_up), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onMyAds() {
-
+        Intent intent = new Intent(activity, MyCouponsActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -119,7 +126,7 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     @Override
     public void onLogout() {
-
+        activity.deleteFirebaseToken();
     }
 
     @Override

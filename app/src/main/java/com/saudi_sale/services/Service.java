@@ -1,18 +1,24 @@
 package com.saudi_sale.services;
 
+import com.saudi_sale.models.CouponDataModel;
 import com.saudi_sale.models.DepartmentDataModel;
 import com.saudi_sale.models.ItemAddAdsDataModel;
 import com.saudi_sale.models.PlaceGeocodeData;
 import com.saudi_sale.models.PlaceMapDetailsData;
 import com.saudi_sale.models.ProductsDataModel;
 import com.saudi_sale.models.RoomDataModel;
+import com.saudi_sale.models.SingleCouponModel;
 import com.saudi_sale.models.SingleProductDataModel;
 import com.saudi_sale.models.StatusResponse;
 import com.saudi_sale.models.TypeDataModel;
 import com.saudi_sale.models.UserModel;
 
+import java.util.List;
+import java.util.Map;
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -21,6 +27,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Query;
 
 public interface Service {
@@ -132,5 +139,142 @@ public interface Service {
     Call<ItemAddAdsDataModel> getItemsAds(@Field("sub_category_id") int sub_category_id
 
     );
+
+    @GET("api/myCoupons")
+    Call<CouponDataModel> getMyCoupon(@Header("Authorization") String user_token);
+
+
+    @FormUrlEncoded
+    @POST("api/singleCoupon")
+    Call<SingleCouponModel> getSingleCoupon(@Field("coupon_id") int coupon_id,
+                                            @Field("user_id") int user_id
+    );
+
+    @Multipart
+    @POST("api/makeNewCoupon")
+    Call<StatusResponse> addCoupon(@Header("Authorization") String user_token,
+                                   @Part("title") RequestBody title,
+                                   @Part("brand_title") RequestBody brand_title,
+                                   @Part("coupon_code") RequestBody coupon_code,
+                                   @Part("offer_value") RequestBody offer_value,
+                                   @Part("from_date") RequestBody from_date,
+                                   @Part MultipartBody.Part image
+
+    );
+
+
+    @Multipart
+    @POST("api/addProduct")
+    Call<StatusResponse> addAdsWithVideoWithList(@Header("Authorization") String user_token,
+                                                 @Part("category_id") RequestBody category_id,
+                                                 @Part("sub_category_id") RequestBody sub_category_id,
+                                                 @Part("title") RequestBody title,
+                                                 @Part("price") RequestBody price,
+                                                 @Part("old_price") RequestBody old_price,
+                                                 @Part("address") RequestBody address,
+                                                 @Part("latitude") RequestBody latitude,
+                                                 @Part("longitude") RequestBody longitude,
+                                                 @Part("have_offer") RequestBody have_offer,
+                                                 @Part("offer_value") RequestBody offer_value,
+                                                 @Part MultipartBody.Part main_image,
+                                                 @Part MultipartBody.Part vedio,
+                                                 @Part List<MultipartBody.Part> images,
+                                                 @Part List<RequestBody> types,
+                                                 @PartMap() Map<String, RequestBody> map
+    );
+
+
+    @Multipart
+    @POST("api/addProduct")
+    Call<StatusResponse> addAdsWithoutVideoWithoutList(@Header("Authorization") String user_token,
+                                                       @Part("category_id") RequestBody category_id,
+                                                       @Part("sub_category_id") RequestBody sub_category_id,
+                                                       @Part("title") RequestBody title,
+                                                       @Part("price") RequestBody price,
+                                                       @Part("old_price") RequestBody old_price,
+                                                       @Part("address") RequestBody address,
+                                                       @Part("latitude") RequestBody latitude,
+                                                       @Part("longitude") RequestBody longitude,
+                                                       @Part("have_offer") RequestBody have_offer,
+                                                       @Part("offer_value") RequestBody offer_value,
+                                                       @Part MultipartBody.Part main_image,
+                                                       @Part List<MultipartBody.Part> images,
+                                                       @Part List<RequestBody> types);
+
+
+    @Multipart
+    @POST("api/addProduct")
+    Call<StatusResponse> addAdsWithoutVideoWithList(@Header("Authorization") String user_token,
+                                                    @Part("category_id") RequestBody category_id,
+                                                    @Part("sub_category_id") RequestBody sub_category_id,
+                                                    @Part("title") RequestBody title,
+                                                    @Part("price") RequestBody price,
+                                                    @Part("old_price") RequestBody old_price,
+                                                    @Part("address") RequestBody address,
+                                                    @Part("latitude") RequestBody latitude,
+                                                    @Part("longitude") RequestBody longitude,
+                                                    @Part("have_offer") RequestBody have_offer,
+                                                    @Part("offer_value") RequestBody offer_value,
+                                                    @Part MultipartBody.Part main_image,
+                                                    @Part List<MultipartBody.Part> images,
+                                                    @Part List<RequestBody> types,
+                                                    @PartMap() Map<String, RequestBody> map
+
+    );
+
+
+    @Multipart
+    @POST("api/addProduct")
+    Call<StatusResponse> addAdsWithVideoWithoutList(@Header("Authorization") String user_token,
+                                                    @Part("category_id") RequestBody category_id,
+                                                    @Part("sub_category_id") RequestBody sub_category_id,
+                                                    @Part("title") RequestBody title,
+                                                    @Part("price") RequestBody price,
+                                                    @Part("old_price") RequestBody old_price,
+                                                    @Part("address") RequestBody address,
+                                                    @Part("latitude") RequestBody latitude,
+                                                    @Part("longitude") RequestBody longitude,
+                                                    @Part("have_offer") RequestBody have_offer,
+                                                    @Part("offer_value") RequestBody offer_value,
+                                                    @Part MultipartBody.Part main_image,
+                                                    @Part MultipartBody.Part vedio,
+                                                    @Part List<MultipartBody.Part> images,
+                                                    @Part List<RequestBody> types
+    );
+
+    @FormUrlEncoded
+    @POST("api/makeActionOnCoupon")
+    Call<StatusResponse> couponAction(@Header("Authorization") String user_token,
+                                      @Field("coupon_id") int coupon_id,
+                                      @Field("like_kind") String like_kind
+    );
+
+    @FormUrlEncoded
+    @POST("api/deleteCoupon")
+    Call<StatusResponse> deleteCoupon(@Header("Authorization") String user_token,
+                                      @Field("coupon_id") int coupon_id);
+
+
+    @FormUrlEncoded
+    @POST("api/firebase-tokens")
+    Call<StatusResponse> updateFirebaseToken(@Field("firebase_token") String firebase_token,
+                                             @Field("user_id") int user_id,
+                                             @Field("software_type") String software_type
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/firebase/token/delete")
+    Call<StatusResponse> deleteFirebaseToken(@Field("firebase_token") String firebase_token,
+                                             @Field("user_id") int user_id
+
+    );
+
+    @POST("api/logout")
+    Call<StatusResponse> logout(@Header("Authorization") String user_token
+
+
+    );
+
 
 }

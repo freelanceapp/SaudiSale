@@ -91,5 +91,16 @@
     <string name="price_after_offer">السعر بعد الخصم</string>
     <string name="offer_value">قيمة العرض</string>
     <string name="inv_value">قيمة العرض غير صحيحة</string>
+    <string name="coupon_name">إسم الكوبون</string>
+    <string name="brand_name">العلامة التجارية</string>
+    <string name="coupon_code">كود الكوبون</string>
+    <string name="coupon_date">تاريخ الكوبون</string>
+    <string name="show">عرض</string>
+    <string name="ch_image">إختر الصورة</string>
+    <string name="add_coupon">إضافة كوبون</string>
+    <string name="my_coupons">الكوبونات</string>
+    <string name="select">إختر</string>
+    <string name="suc">تم بنجاح!</string>
+    <string name="coupon_valid">هل الكوبون يعمل؟</string>
 
 </resources>

@@ -38,6 +38,7 @@ public class UserModel extends StatusResponse implements Serializable {
        private String created_at;
        private String updated_at;
        private String token;
+       private String firebaseToken="";
 
         public int getId() {
             return id;
@@ -141,6 +142,14 @@ public class UserModel extends StatusResponse implements Serializable {
 
         public String getToken() {
             return token;
+        }
+
+        public String getFirebaseToken() {
+            return firebaseToken;
+        }
+
+        public void setFirebaseToken(String firebaseToken) {
+            this.firebaseToken = firebaseToken;
         }
     }
 }
