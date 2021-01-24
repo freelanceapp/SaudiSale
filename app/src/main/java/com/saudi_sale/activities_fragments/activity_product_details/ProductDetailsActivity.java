@@ -395,7 +395,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         }
             try {
                 Api.getService(Tags.base_url)
-                        .report("Bearer " + userModel.getData().getToken(), product_id, "")
+                        .report("Bearer " + userModel.getData().getToken(), product_id, "0")
                         .enqueue(new Callback<StatusResponse>() {
                             @Override
                             public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {

@@ -34,6 +34,7 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.fragment = fragment;
+        activity = (AppCompatActivity) context;
     }
 
     @NonNull
