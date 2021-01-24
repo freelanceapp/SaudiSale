@@ -87,6 +87,7 @@
                             android:background="@drawable/circle_gray"
 
 
+
                             >
 
 
@@ -113,7 +114,9 @@
                                 android:singleLine="true"
                                 android:text='@{String.valueOf(notCount),default="0"}'
                                 android:textColor="@color/white"
-                                android:textSize="12sp" />
+                                android:textSize="12sp"
+                                android:visibility="invisible"
+                                />
 
                         </FrameLayout>
 

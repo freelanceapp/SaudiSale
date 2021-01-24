@@ -567,6 +567,18 @@
 
                     </androidx.cardview.widget.CardView>
 
+                    <CheckBox
+                        android:id="@+id/checkboxSwear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        app:buttonTint="@color/colorPrimary"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16sp"
+                        android:text="@string/already_read"
+                        />
                     <Button
                         android:id="@+id/btnSend"
                         android:layout_width="match_parent"

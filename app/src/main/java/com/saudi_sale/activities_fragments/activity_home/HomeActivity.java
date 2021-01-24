@@ -30,6 +30,7 @@ import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Offe
 import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Profile;
 import com.saudi_sale.activities_fragments.activity_login.LoginActivity;
 import com.saudi_sale.activities_fragments.activity_my_coupon.MyCouponsActivity;
+import com.saudi_sale.activities_fragments.activity_notification.NotificationActivity;
 import com.saudi_sale.adapters.ExpandDepartmentAdapter;
 import com.saudi_sale.databinding.ActivityHomeBinding;
 import com.saudi_sale.language.Language;
@@ -101,15 +102,8 @@ public class HomeActivity extends AppCompatActivity {
         binding.toolbar.getNavigationIcon().setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         binding.flNotification.setOnClickListener(view -> {
 
-
-            if (userModel != null) {
-                readNotificationCount();
-                /*Intent intent = new Intent(HomeActivity.this, NotificationActivity.class);
-                startActivity(intent);*/
-
-            } else {
-                Common.CreateDialogAlert(this, getString(R.string.please_sign_in_or_sign_up));
-            }
+            Intent intent = new Intent(HomeActivity.this, NotificationActivity.class);
+            startActivity(intent);
 
         });
         binding.setModel(userModel);
@@ -480,15 +474,15 @@ public class HomeActivity extends AppCompatActivity {
 
                 try {
                     Api.getService(Tags.base_url)
-                            .updateFirebaseToken(token,userModel.getData().getId(), "android")
+                            .updateFirebaseToken(token, userModel.getData().getId(), "android")
                             .enqueue(new Callback<StatusResponse>() {
                                 @Override
                                 public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
                                     if (response.isSuccessful() && response.body() != null) {
 
-                                        if (response.body().getStatus()==200){
+                                        if (response.body().getStatus() == 200) {
                                             userModel.getData().setFirebaseToken(token);
-                                            preferences.create_update_userdata(HomeActivity.this,userModel);
+                                            preferences.create_update_userdata(HomeActivity.this, userModel);
                                             Log.e("token", "updated successfully");
 
                                         }
@@ -528,26 +522,26 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    public void deleteFirebaseToken(){
-        if (userModel==null){
+    public void deleteFirebaseToken() {
+        if (userModel == null) {
             navigateToSignInActivity();
 
-        }else {
+        } else {
             ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(true);
             dialog.show();
 
             Api.getService(Tags.base_url)
-                    .deleteFirebaseToken(userModel.getData().getFirebaseToken(),userModel.getData().getId())
+                    .deleteFirebaseToken(userModel.getData().getFirebaseToken(), userModel.getData().getId())
                     .enqueue(new Callback<StatusResponse>() {
                         @Override
                         public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
-                            if (response.isSuccessful()&&response.body()!=null) {
+                            if (response.isSuccessful() && response.body() != null) {
 
-                                if (response.body().getStatus()==200){
+                                if (response.body().getStatus() == 200) {
                                     logout(dialog);
-                                }else {
+                                } else {
                                     Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
 
@@ -588,21 +582,26 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-    private void logout(ProgressDialog dialog)
-    {
+
+    private void logout(ProgressDialog dialog) {
         Api.getService(Tags.base_url)
-                .logout("Bearer "+userModel.getData().getToken())
+                .logout("Bearer " + userModel.getData().getToken())
                 .enqueue(new Callback<StatusResponse>() {
                     @Override
                     public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()) {
-                            preferences.clear(HomeActivity.this);
-                            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                            if (manager != null) {
-                                manager.cancel(Tags.not_tag, Tags.not_id);
+                            if (response.body() != null && response.body().getStatus() == 200) {
+                                preferences.clear(HomeActivity.this);
+                                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                if (manager != null) {
+                                    manager.cancel(Tags.not_tag, Tags.not_id);
+                                }
+                                navigateToSignInActivity();
+                            } else {
+                                Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
                             }
-                            navigateToSignInActivity();
 
 
                         } else {
@@ -650,7 +649,7 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);
-                }, 1050);
+                }, 500);
 
 
     }
@@ -728,5 +727,11 @@ public class HomeActivity extends AppCompatActivity {
 
         this.parent_pos = parent_pos;
         this.child_pos = adapterPosition;
+    }
+
+    public void refreshFragmentOffers() {
+        if (fragment_offer != null && fragment_offer.isAdded()) {
+            fragment_offer.getData();
+        }
     }
 }

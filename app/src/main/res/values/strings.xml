@@ -103,7 +103,21 @@
     <string name="select">Select</string>
     <string name="suc">Success!</string>
     <string name="coupon_valid">Coupon valid?</string>
-    <string name="already_read">Already read</string>
+    <string name="already_read">Already read swear</string>
     <string name="done">Done</string>
+    <string name="accept_terms">Accept terms and conditions</string>
+    <string name="ad_price2">Ad price</string>
+    <string name="result">Result</string>
+    <string name="commission_calculator">Commission calculator</string>
+    <string name="if_it_is_sold_at_a_price_of">If it is sold at a price of</string>
+    <string name="the_amount_owed_to_payment_is">the amount owed to payment is</string>
+    <string name="details">Details</string>
+    <string name="the_site_commission">The site commission from the commodity price is 1%</string>
+    <string name="delete">Delete</string>
+    <string name="message">Message</string>
+    <string name="send">Send</string>
+    <string name="general_settings">General Settings</string>
+    <string name="change_language">Change language</string>
+    <string name="next">Next</string>
 
 </resources>

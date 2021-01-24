@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,8 +65,7 @@ public class CouponDetailsActivity extends AppCompatActivity {
         coupon_id = intent.getIntExtra("data", 0);
     }
 
-    private void initView()
-    {
+    private void initView() {
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         Paper.init(this);
@@ -73,6 +74,9 @@ public class CouponDetailsActivity extends AppCompatActivity {
         binding.llBack.setOnClickListener(view -> finish());
         binding.imageLike.setOnClickListener(view -> {
             if (couponModel.getLike_action() == null) {
+                int newLikeCount = couponModel.getLikes_count() + 1;
+                couponModel.setLikes_count(newLikeCount);
+
                 CouponModel.LikeAction likeAction = new CouponModel.LikeAction();
                 likeAction.setType("like");
                 couponModel.setLike_action(likeAction);
@@ -80,15 +84,22 @@ public class CouponDetailsActivity extends AppCompatActivity {
                 couponAction("like");
 
             } else {
-                if (couponModel.getLike_action().getType().equals("like")){
+                if (couponModel.getLike_action().getType().equals("like")) {
+
+
+                    int newLikeCount = couponModel.getLikes_count() - 1;
+                    couponModel.setLikes_count(newLikeCount);
+
+
                     couponModel.setLike_action(null);
                     binding.setModel(couponModel);
                     couponAction("deleteAction");
 
-                }else {
+                } else {
 
-                    int newLikeCount = couponModel.getLikes_count()-1;
-                    int newDisLike = couponModel.getDislikes_count()+1;
+
+                    int newLikeCount = couponModel.getLikes_count() + 1;
+                    int newDisLike = couponModel.getDislikes_count() - 1;
                     couponModel.setLikes_count(newLikeCount);
                     couponModel.setDislikes_count(newDisLike);
 
@@ -104,6 +115,9 @@ public class CouponDetailsActivity extends AppCompatActivity {
         });
         binding.imageDisLike.setOnClickListener(view -> {
             if (couponModel.getLike_action() == null) {
+                int newDisLikeCount = couponModel.getDislikes_count() + 1;
+                couponModel.setDislikes_count(newDisLikeCount);
+
                 CouponModel.LikeAction likeAction = new CouponModel.LikeAction();
                 likeAction.setType("dislike");
                 couponModel.setLike_action(likeAction);
@@ -112,15 +126,19 @@ public class CouponDetailsActivity extends AppCompatActivity {
 
             } else {
 
-                if (couponModel.getLike_action().getType().equals("dislike")){
+                if (couponModel.getLike_action().getType().equals("dislike")) {
+
+                    int newDisLikeCount = couponModel.getDislikes_count() - 1;
+                    couponModel.setDislikes_count(newDisLikeCount);
+
                     couponModel.setLike_action(null);
                     binding.setModel(couponModel);
                     couponAction("deleteAction");
 
-                }else {
+                } else {
 
-                    int newLikeCount = couponModel.getLikes_count()+1;
-                    int newDisLike = couponModel.getDislikes_count()-1;
+                    int newLikeCount = couponModel.getLikes_count() - 1;
+                    int newDisLike = couponModel.getDislikes_count() + 1;
                     couponModel.setLikes_count(newLikeCount);
                     couponModel.setDislikes_count(newDisLike);
 
@@ -134,10 +152,16 @@ public class CouponDetailsActivity extends AppCompatActivity {
             }
 
         });
+        binding.imageCopy.setOnClickListener(view -> {
+            ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            ClipData data = ClipData.newPlainText("label", couponModel.getCoupon_code());
+            manager.setPrimaryClip(data);
+            Toast.makeText(this, getString(R.string.copied), Toast.LENGTH_SHORT).show();
+        });
         getCoupon();
     }
-    private void getCoupon()
-    {
+
+    private void getCoupon() {
         if (userModel == null) {
             return;
         }
@@ -153,7 +177,7 @@ public class CouponDetailsActivity extends AppCompatActivity {
                                     binding.progBar.setVisibility(View.GONE);
                                     couponModel = response.body().getData();
                                     binding.setModel(couponModel);
-                                    binding.consData.setVisibility(View.GONE);
+                                    binding.consData.setVisibility(View.VISIBLE);
 
                                 } else {
                                     Toast.makeText(CouponDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
@@ -201,8 +225,8 @@ public class CouponDetailsActivity extends AppCompatActivity {
         }
 
     }
-    private void couponAction(String action)
-    {
+
+    private void couponAction(String action) {
 
         if (userModel == null) {
             return;
@@ -222,6 +246,15 @@ public class CouponDetailsActivity extends AppCompatActivity {
                                     Toast.makeText(CouponDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             } else {
+                                if (action.equals("like")) {
+                                    int newLikeCount = couponModel.getLikes_count() - 1;
+                                    couponModel.setLikes_count(newLikeCount);
+                                    binding.setModel(couponModel);
+                                } else {
+                                    int newDisLikeCount = couponModel.getDislikes_count() - 1;
+                                    couponModel.setLikes_count(newDisLikeCount);
+                                    binding.setModel(couponModel);
+                                }
                                 getCoupon();
                                 binding.progBar.setVisibility(View.GONE);
 
@@ -245,6 +278,16 @@ public class CouponDetailsActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<StatusResponse> call, Throwable t) {
                             try {
+                                if (action.equals("like")) {
+                                    int newLikeCount = couponModel.getLikes_count() - 1;
+                                    couponModel.setLikes_count(newLikeCount);
+                                    binding.setModel(couponModel);
+                                } else {
+                                    int newDisLikeCount = couponModel.getDislikes_count() - 1;
+                                    couponModel.setLikes_count(newDisLikeCount);
+                                    binding.setModel(couponModel);
+                                }
+
                                 getCoupon();
                                 binding.progBar.setVisibility(View.GONE);
 

@@ -183,7 +183,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:button="@drawable/checkbox_bg"
-                            android:visibility="@{model==null?View.INVISIBLE:View.VISIBLE,default=invisible}"
+                            android:visibility="@{userModel==null?View.INVISIBLE:(userModel.data.id==model.user.id?View.INVISIBLE:View.VISIBLE),default=invisible}"
                             />
 
                         <ImageView
@@ -194,7 +194,7 @@
                             android:layout_marginEnd="10dp"
                             android:src="@drawable/ic_warning"
                             app:tint="@color/gray5"
-                            android:visibility="@{model==null?View.INVISIBLE:View.VISIBLE,default=invisible}"
+                            android:visibility="@{userModel==null?View.INVISIBLE:(userModel.data.id==model.user.id?View.INVISIBLE:View.VISIBLE),default=invisible}"
 
 
 
@@ -469,7 +469,7 @@
                                     android:paddingEnd="8dp"
                                     android:paddingTop="5dp"
                                     android:paddingBottom="5dp"
-                                    android:visibility="@{model==null?View.INVISIBLE:View.VISIBLE,default=invisible}"
+                                    android:visibility="@{userModel==null?View.INVISIBLE:(userModel.data.id==model.user.id?View.INVISIBLE:View.VISIBLE),default=invisible}"
 
                                     >
                                     <ImageView
@@ -541,7 +541,10 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp">
+                                    android:layout_marginEnd="10dp"
+                                    android:visibility="@{userModel==null?View.INVISIBLE:(userModel.data.id==model.user.id?View.INVISIBLE:View.VISIBLE),default=invisible}"
+
+                                    >
 
                                     <de.hdodenhof.circleimageview.CircleImageView
                                         android:layout_width="36dp"
@@ -568,6 +571,8 @@
                                     android:layout_height="36dp"
                                     android:src="@drawable/whatsapp"
                                     android:padding="5dp"
+                                    android:visibility="@{userModel==null?View.INVISIBLE:(userModel.data.id==model.user.id?View.INVISIBLE:View.VISIBLE),default=invisible}"
+
                                     />
                             </LinearLayout>
 

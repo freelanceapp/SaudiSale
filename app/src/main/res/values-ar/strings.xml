@@ -104,5 +104,19 @@
     <string name="coupon_valid">هل الكوبون يعمل؟</string>
     <string name="already_read">لقد قرأت القسم</string>
     <string name="done">تم</string>
+    <string name="accept_terms">الموافقة على الشروط والاحكام</string>
+    <string name="ad_price2">سعر الاعلان</string>
+    <string name="result">الناتج</string>
+    <string name="commission_calculator">حاسبة العمولة</string>
+    <string name="if_it_is_sold_at_a_price_of">إذا تم بيع السلعة بسعر </string>
+    <string name="the_amount_owed_to_payment_is">فإن المبلغ المستحق دفعة هو </string>
+    <string name="details">التفاصيل</string>
+    <string name="the_site_commission">عمولة الموقع من سعر السلعة هى 1%.</string>
+    <string name="delete">حذف</string>
+    <string name="message">الرسالة</string>
+    <string name="send">إرسال</string>
+    <string name="general_settings">الإعدادت العامة</string>
+    <string name="change_language">تغيير اللغة</string>
+    <string name="next">Next</string>
 
 </resources>

@@ -414,7 +414,7 @@ public class AddCouponActivity extends AppCompatActivity implements DatePickerDi
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         calendar.set(Calendar.MONTH, monthOfYear);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         String date = dateFormat.format(new Date(calendar.getTimeInMillis()));
         model.setDate(date);
         binding.setModel(model);

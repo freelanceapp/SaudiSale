@@ -16,8 +16,13 @@ import androidx.fragment.app.Fragment;
 
 import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.activity_add_ads.AddAdsActivity;
+import com.saudi_sale.activities_fragments.activity_commission.CommissionActivity;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
+import com.saudi_sale.activities_fragments.activity_my_ads.MyAdsActivity;
 import com.saudi_sale.activities_fragments.activity_my_coupon.MyCouponsActivity;
+import com.saudi_sale.activities_fragments.activity_my_favorite.MyFavoriteActivity;
+import com.saudi_sale.activities_fragments.activity_setting.SettingActivity;
+import com.saudi_sale.activity_contact_us.ContactUsActivity;
 import com.saudi_sale.databinding.FragmentProfileBinding;
 import com.saudi_sale.interfaces.Listeners;
 import com.saudi_sale.models.UserModel;
@@ -69,30 +74,12 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
 
 
-
-
-
-
-
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==100&&resultCode== Activity.RESULT_OK){
-            userModel = preferences.getUserData(activity);
-            binding.setModel(userModel);
-
-        }
-    }
-
-
     @Override
     public void onAddAd() {
-        if (userModel!=null){
+        if (userModel != null) {
             Intent intent = new Intent(activity, AddAdsActivity.class);
             startActivity(intent);
-        }else {
+        } else {
             Toast.makeText(activity, getString(R.string.please_sign_in_or_sign_up), Toast.LENGTH_SHORT).show();
         }
 
@@ -101,26 +88,34 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     @Override
     public void onContactUs() {
-
+        Intent intent = new Intent(activity, ContactUsActivity.class);
+        startActivity(intent);
     }
 
     @Override
     public void onMyFavorite() {
-        if (userModel!=null){
-
-        }else {
+        if (userModel != null) {
+            Intent intent = new Intent(activity, MyFavoriteActivity.class);
+            startActivity(intent);
+        } else {
             Toast.makeText(activity, getString(R.string.please_sign_in_or_sign_up), Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onMyAds() {
-
+        if (userModel != null) {
+            Intent intent = new Intent(activity, MyAdsActivity.class);
+            startActivityForResult(intent, 200);
+        } else {
+            Toast.makeText(activity, getString(R.string.please_sign_in_or_sign_up), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onCommission() {
-
+        Intent intent = new Intent(activity, CommissionActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -130,6 +125,24 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     @Override
     public void onSetting() {
+        Intent intent = new Intent(activity, SettingActivity.class);
+        startActivityForResult(intent, 300);
+    }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            userModel = preferences.getUserData(activity);
+            binding.setModel(userModel);
+
+        } else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
+            activity.refreshFragmentOffers();
+
+        }else if (requestCode == 300 && resultCode == Activity.RESULT_OK&&data!=null) {
+            String lang = data.getStringExtra("lang");
+            activity.refreshActivity(lang);
+        }
     }
 }

@@ -23,6 +23,7 @@
             android:orientation="vertical"
             >
             <LinearLayout
+                android:id="@+id/llData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -38,6 +39,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        image="@{model.coupon_image}"
 
                         />
                 </androidx.cardview.widget.CardView>

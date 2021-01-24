@@ -49,7 +49,7 @@ public class Fragment_Offer extends Fragment {
     private Preferences preferences;
     private UserModel userModel;
     private String lang;
-    private List<ProductModel> latestOfferModelList,offerModelList;
+    private List<ProductModel> latestOfferModelList, offerModelList;
     private LatestOfferAdapter latestOfferAdapter;
     private OfferAdapter offerAdapter;
 
@@ -67,7 +67,6 @@ public class Fragment_Offer extends Fragment {
     }
 
 
-
     private void initView() {
         latestOfferModelList = new ArrayList<>();
         offerModelList = new ArrayList<>();
@@ -77,22 +76,31 @@ public class Fragment_Offer extends Fragment {
         binding.setLang(lang);
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(activity);
-        latestOfferAdapter = new LatestOfferAdapter(latestOfferModelList,activity,this);
+        latestOfferAdapter = new LatestOfferAdapter(latestOfferModelList, activity, this);
         binding.progBarOffer.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         binding.progBarLatestOffer.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
-        binding.recViewLatestOffer.setLayoutManager(new LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false));
+        binding.recViewLatestOffer.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
         binding.recViewLatestOffer.setAdapter(latestOfferAdapter);
 
-        binding.recViewOffer.setLayoutManager(new GridLayoutManager(activity,2));
-        offerAdapter = new OfferAdapter(offerModelList,activity,this);
+        binding.recViewOffer.setLayoutManager(new GridLayoutManager(activity, 2));
+        offerAdapter = new OfferAdapter(offerModelList, activity, this);
         binding.recViewOffer.setAdapter(offerAdapter);
 
-        getLatestOffer();
-        getOffer();
+        getData();
 
     }
 
+    public void getData() {
+        getLatestOffer();
+        getOffer();
+    }
+
     private void getOffer() {
+        offerModelList.clear();
+        offerAdapter.notifyDataSetChanged();
+        binding.progBarOffer.setVisibility(View.VISIBLE);
+        binding.tvNoDataOffer.setVisibility(View.GONE);
+
         try {
 
             Api.getService(Tags.base_url)
@@ -101,18 +109,18 @@ public class Fragment_Offer extends Fragment {
                         @Override
                         public void onResponse(Call<ProductsDataModel> call, Response<ProductsDataModel> response) {
                             binding.progBarOffer.setVisibility(View.GONE);
-                            if (response.isSuccessful() && response.body() != null ) {
-                                if (response.body().getStatus()==200){
-                                    if (response.body().getData().size()>0){
+                            if (response.isSuccessful() && response.body() != null) {
+                                if (response.body().getStatus() == 200) {
+                                    if (response.body().getData().size() > 0) {
                                         offerModelList.clear();
                                         offerModelList.addAll(response.body().getData());
                                         offerAdapter.notifyDataSetChanged();
                                         binding.tvNoDataOffer.setVisibility(View.GONE);
-                                    }else {
+                                    } else {
                                         binding.tvNoDataOffer.setVisibility(View.VISIBLE);
 
                                     }
-                                }else {
+                                } else {
                                     Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             } else {
@@ -160,6 +168,10 @@ public class Fragment_Offer extends Fragment {
 
     private void getLatestOffer() {
 
+        latestOfferModelList.clear();
+        latestOfferAdapter.notifyDataSetChanged();
+        binding.progBarLatestOffer.setVisibility(View.VISIBLE);
+        binding.tvNoDataLatestOffer.setVisibility(View.GONE);
         try {
 
             Api.getService(Tags.base_url)
@@ -168,18 +180,18 @@ public class Fragment_Offer extends Fragment {
                         @Override
                         public void onResponse(Call<ProductsDataModel> call, Response<ProductsDataModel> response) {
                             binding.progBarLatestOffer.setVisibility(View.GONE);
-                            if (response.isSuccessful() && response.body() != null ) {
-                                if (response.body().getStatus()==200){
-                                    if (response.body().getData().size()>0){
+                            if (response.isSuccessful() && response.body() != null) {
+                                if (response.body().getStatus() == 200) {
+                                    if (response.body().getData().size() > 0) {
                                         latestOfferModelList.clear();
                                         latestOfferModelList.addAll(response.body().getData());
                                         latestOfferAdapter.notifyDataSetChanged();
                                         binding.tvNoDataLatestOffer.setVisibility(View.GONE);
-                                    }else {
+                                    } else {
                                         binding.tvNoDataLatestOffer.setVisibility(View.VISIBLE);
 
                                     }
-                                }else {
+                                } else {
                                     Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             } else {
@@ -228,7 +240,7 @@ public class Fragment_Offer extends Fragment {
 
     public void setProductItemData(ProductModel productModel) {
         Intent intent = new Intent(activity, ProductDetailsActivity.class);
-        intent.putExtra("product_id",productModel.getId());
+        intent.putExtra("product_id", productModel.getId());
         startActivity(intent);
     }
 }

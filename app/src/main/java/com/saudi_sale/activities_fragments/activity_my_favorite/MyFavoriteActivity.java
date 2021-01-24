@@ -1,32 +1,24 @@
-package com.saudi_sale.activities_fragments.activity_my_coupon;
+package com.saudi_sale.activities_fragments.activity_my_favorite;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.saudi_sale.R;
-import com.saudi_sale.activities_fragments.activity_add_coupon.AddCouponActivity;
-import com.saudi_sale.activities_fragments.activity_coupon_details.CouponDetailsActivity;
-import com.saudi_sale.adapters.CouponAdapter;
-import com.saudi_sale.databinding.ActivityLoginBinding;
-import com.saudi_sale.databinding.ActivityMyCouponsBinding;
+import com.saudi_sale.activities_fragments.activity_my_ads.MyAdsActivity;
+import com.saudi_sale.activities_fragments.activity_product_details.ProductDetailsActivity;
+import com.saudi_sale.adapters.MyFavoriteAdapter;
+import com.saudi_sale.databinding.ActivityMyFavoriteBinding;
 import com.saudi_sale.language.Language;
-import com.saudi_sale.models.CouponDataModel;
-import com.saudi_sale.models.CouponModel;
-import com.saudi_sale.models.LoginModel;
+import com.saudi_sale.models.ProductModel;
 import com.saudi_sale.models.ProductsDataModel;
 import com.saudi_sale.models.StatusResponse;
 import com.saudi_sale.models.UserModel;
@@ -44,15 +36,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MyCouponsActivity extends AppCompatActivity {
-
-    private ActivityMyCouponsBinding binding;
-    private String lang;
-    private Preferences preferences;
+public class MyFavoriteActivity extends AppCompatActivity {
+    private ActivityMyFavoriteBinding binding;
+    private Preferences preference;
     private UserModel userModel;
-    private List<CouponModel> couponModelList;
-    private CouponAdapter adapter;
-
+    private MyFavoriteAdapter adapter;
+    private List<ProductModel> productModelList;
+    private String lang;
 
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -62,61 +52,43 @@ public class MyCouponsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_my_coupons);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_my_favorite);
         initView();
     }
 
     private void initView() {
-        couponModelList = new ArrayList<>();
-        preferences = Preferences.getInstance();
-        userModel = preferences.getUserData(this);
+        productModelList = new ArrayList<>();
         Paper.init(this);
         lang = Paper.book().read("lang", "ar");
         binding.setLang(lang);
-        binding.swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
-
-        binding.recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CouponAdapter(couponModelList, this);
+        preference = Preferences.getInstance();
+        userModel = preference.getUserData(this);
+        binding.recView.setLayoutManager(new GridLayoutManager(this, 2));
+        adapter = new MyFavoriteAdapter(productModelList, this);
         binding.recView.setAdapter(adapter);
-        binding.llBack.setOnClickListener(view -> finish());
-        binding.fabAdd.setOnClickListener(view -> {
-            if (userModel != null) {
-                Intent intent = new Intent(this, AddCouponActivity.class);
-                startActivityForResult(intent, 100);
-            } else {
-                Toast.makeText(this, getString(R.string.please_sign_in_or_sign_up), Toast.LENGTH_SHORT).show();
-            }
+        binding.swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        binding.swipeRefresh.setOnRefreshListener(this::getMyFavorite);
+        binding.llBack.setOnClickListener(view -> onBackPressed());
 
-        });
-        binding.swipeRefresh.setOnRefreshListener(this::getCoupons);
-
-
-        getCoupons();
-
+        getMyFavorite();
     }
 
-    private void getCoupons() {
-        if (userModel == null) {
-            binding.progBar.setVisibility(View.GONE);
-            binding.swipeRefresh.setRefreshing(false);
-            binding.tvNoData.setVisibility(View.VISIBLE);
-            return;
-        }
+    private void getMyFavorite() {
+
         try {
 
             Api.getService(Tags.base_url)
-                    .getMyCoupon("Bearer " + userModel.getData().getToken())
-                    .enqueue(new Callback<CouponDataModel>() {
+                    .getMyFavorite("Bearer " + userModel.getData().getToken())
+                    .enqueue(new Callback<ProductsDataModel>() {
                         @Override
-                        public void onResponse(Call<CouponDataModel> call, Response<CouponDataModel> response) {
+                        public void onResponse(Call<ProductsDataModel> call, Response<ProductsDataModel> response) {
                             binding.progBar.setVisibility(View.GONE);
                             binding.swipeRefresh.setRefreshing(false);
-
                             if (response.isSuccessful() && response.body() != null) {
                                 if (response.body().getStatus() == 200) {
                                     if (response.body().getData().size() > 0) {
-                                        couponModelList.clear();
-                                        couponModelList.addAll(response.body().getData());
+                                        productModelList.clear();
+                                        productModelList.addAll(response.body().getData());
                                         adapter.notifyDataSetChanged();
                                         binding.tvNoData.setVisibility(View.GONE);
                                     } else {
@@ -124,18 +96,17 @@ public class MyCouponsActivity extends AppCompatActivity {
 
                                     }
                                 } else {
-                                    Toast.makeText(MyCouponsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MyFavoriteActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 binding.progBar.setVisibility(View.GONE);
                                 binding.swipeRefresh.setRefreshing(false);
-
                                 if (response.code() == 500) {
-                                    Toast.makeText(MyCouponsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MyFavoriteActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
 
 
                                 } else {
-                                    Toast.makeText(MyCouponsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MyFavoriteActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
 
                                     try {
 
@@ -148,7 +119,7 @@ public class MyCouponsActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(Call<CouponDataModel> call, Throwable t) {
+                        public void onFailure(Call<ProductsDataModel> call, Throwable t) {
                             try {
                                 binding.progBar.setVisibility(View.GONE);
                                 binding.swipeRefresh.setRefreshing(false);
@@ -156,9 +127,9 @@ public class MyCouponsActivity extends AppCompatActivity {
                                 if (t.getMessage() != null) {
                                     Log.e("error", t.getMessage());
                                     if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                        Toast.makeText(MyCouponsActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MyFavoriteActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(MyCouponsActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MyFavoriteActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
 
@@ -172,60 +143,50 @@ public class MyCouponsActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 && resultCode == RESULT_OK) {
-            getCoupons();
-        }
-    }
-
-    public void copy(String couponCode) {
-        ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        ClipData data = ClipData.newPlainText("label", couponCode);
-        manager.setPrimaryClip(data);
-        Toast.makeText(this, getString(R.string.copied), Toast.LENGTH_SHORT).show();
-    }
-
-    public void setItemData(CouponModel couponModel) {
-        Intent intent = new Intent(this, CouponDetailsActivity.class);
-        intent.putExtra("data", couponModel.getId());
+    public void setProductItemData(ProductModel productModel) {
+        Intent intent = new Intent(this, ProductDetailsActivity.class);
+        intent.putExtra("product_id", productModel.getId());
         startActivity(intent);
     }
 
-    public void deleteCoupon(int coupon_id, int pos) {
-
-        if (userModel == null) {
-            return;
-        }
+    public void disLike(ProductModel productModel, int adapterPosition) {
         try {
+            ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(true);
+            dialog.show();
 
             Api.getService(Tags.base_url)
-                    .deleteCoupon("Bearer " + userModel.getData().getToken(), coupon_id)
+                    .like_disliked("Bearer " + userModel.getData().getToken(), productModel.getId())
                     .enqueue(new Callback<StatusResponse>() {
                         @Override
                         public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
-                            if (response.isSuccessful() && response.body() != null) {
+                            if (response.isSuccessful()) {
+                                dialog.dismiss();
                                 if (response.body().getStatus() == 200) {
-                                    couponModelList.remove(pos);
-                                    adapter.notifyItemRemoved(pos);
-                                    if (couponModelList.size() > 0) {
+                                    productModelList.remove(adapterPosition);
+                                    adapter.notifyItemRemoved(adapterPosition);
+                                    if (productModelList.size() > 0) {
                                         binding.tvNoData.setVisibility(View.GONE);
                                     } else {
                                         binding.tvNoData.setVisibility(View.VISIBLE);
+
                                     }
                                 } else {
-                                    Toast.makeText(MyCouponsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+
+                                    Toast.makeText(MyFavoriteActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
                                 }
                             } else {
-                                binding.progBar.setVisibility(View.GONE);
 
+                                dialog.dismiss();
                                 if (response.code() == 500) {
-                                    Toast.makeText(MyCouponsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MyFavoriteActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
 
 
                                 } else {
-                                    Toast.makeText(MyCouponsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MyFavoriteActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
 
                                     try {
 
@@ -240,14 +201,13 @@ public class MyCouponsActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<StatusResponse> call, Throwable t) {
                             try {
-                                binding.progBar.setVisibility(View.GONE);
-
+                                dialog.dismiss();
                                 if (t.getMessage() != null) {
                                     Log.e("error", t.getMessage());
                                     if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                        Toast.makeText(MyCouponsActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MyFavoriteActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(MyCouponsActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MyFavoriteActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
 
@@ -256,8 +216,13 @@ public class MyCouponsActivity extends AppCompatActivity {
                         }
                     });
         } catch (Exception e) {
-
         }
-
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+
 }

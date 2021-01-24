@@ -1,7 +1,7 @@
 package com.saudi_sale.adapters;
 
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -15,31 +15,29 @@ import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.activity_department_details.DepartmentDetailsActivity;
 import com.saudi_sale.activities_fragments.activity_home.fragments.Fragment_Home;
 import com.saudi_sale.activities_fragments.activity_my_ads.MyAdsActivity;
+import com.saudi_sale.databinding.ProductRow2Binding;
 import com.saudi_sale.databinding.ProductRowBinding;
 import com.saudi_sale.models.ProductModel;
-import com.saudi_sale.tags.Tags;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MyProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ProductModel> list;
     private Context context;
     private LayoutInflater inflater;
-    private Fragment fragment;
     private AppCompatActivity activity;
 
-    public ProductAdapter(List<ProductModel> list, Context context, Fragment fragment) {
+    public MyProductAdapter(List<ProductModel> list, Context context) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
-        this.fragment = fragment;
+        activity = (AppCompatActivity) context;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ProductRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.product_row, parent, false);
+        ProductRow2Binding binding = DataBindingUtil.inflate(inflater, R.layout.product_row2, parent, false);
         return new MyHolder(binding);
 
     }
@@ -49,21 +47,19 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof MyHolder) {
             MyHolder myHolder = (MyHolder) holder;
             myHolder.binding.setModel(list.get(position));
+            myHolder.binding.tvOldPrice.setPaintFlags(myHolder.binding.tvOldPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
 
             myHolder.itemView.setOnClickListener(view -> {
-                if (fragment!=null){
-                    if (fragment instanceof Fragment_Home) {
+                if (activity instanceof MyAdsActivity){
+                    MyAdsActivity myAdsActivity = (MyAdsActivity) activity;
+                    myAdsActivity.setProductItemData(list.get(myHolder.getAdapterPosition()));
 
-                        Fragment_Home fragment_main = (Fragment_Home) fragment;
-                        fragment_main.setProductItemData(list.get(myHolder.getAdapterPosition()));
-                    }
-                }else {
-                    if (activity instanceof DepartmentDetailsActivity){
-                        DepartmentDetailsActivity departmentDetailsActivity = (DepartmentDetailsActivity) activity;
-                        departmentDetailsActivity.setProductItemData(list.get(myHolder.getAdapterPosition()));
-
-                    }
                 }
+            });
+
+            myHolder.binding.imageDelete.setOnClickListener(view -> {
+                MyAdsActivity myAdsActivity = (MyAdsActivity) activity;
+                myAdsActivity.deleteAd(list.get(myHolder.getAdapterPosition()),myHolder.getAdapterPosition());
 
             });
 
@@ -77,10 +73,10 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return list.size();
     }
 
-    public class MyHolder extends RecyclerView.ViewHolder {
-        public ProductRowBinding binding;
+    public static class MyHolder extends RecyclerView.ViewHolder {
+        public ProductRow2Binding binding;
 
-        public MyHolder(@NonNull ProductRowBinding binding) {
+        public MyHolder(@NonNull ProductRow2Binding binding) {
             super(binding.getRoot());
             this.binding = binding;
 

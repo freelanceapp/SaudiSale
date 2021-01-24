@@ -27,6 +27,7 @@ public class AddAdsModel extends BaseObservable implements Serializable {
     private double lat;
     private double lng;
     private boolean hasExtraItems;
+    private boolean swear = false;
     private String video_url;
     private List<Integer> types;
     private List<String> imagesList;
@@ -51,7 +52,8 @@ public class AddAdsModel extends BaseObservable implements Serializable {
                 !details.isEmpty() &&
                 !address.isEmpty() &&
                 imagesList.size()>0&&
-                imagesList.size() <= 5
+                imagesList.size() <= 5&&
+                swear
 
         ) {
 
@@ -216,6 +218,9 @@ public class AddAdsModel extends BaseObservable implements Serializable {
                 }
             }
 
+            if (!swear){
+                Toast.makeText(context, R.string.accept_terms, Toast.LENGTH_SHORT).show();
+            }
 
 
             if (hasExtraItems&&itemAddAdsList.size()>0){
@@ -244,6 +249,7 @@ public class AddAdsModel extends BaseObservable implements Serializable {
         have_offer="without_offer";
         imagesList = new ArrayList<>();
         hasExtraItems = false;
+        swear = false;
         itemAddAdsList = new ArrayList<>();
         types = new ArrayList<>();
     }
@@ -392,6 +398,14 @@ public class AddAdsModel extends BaseObservable implements Serializable {
 
 
         return valid;
+    }
+
+    public boolean isSwear() {
+        return swear;
+    }
+
+    public void setSwear(boolean swear) {
+        this.swear = swear;
     }
 
     public List<Integer> getTypes() {

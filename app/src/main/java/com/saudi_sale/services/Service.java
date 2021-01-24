@@ -3,6 +3,7 @@ package com.saudi_sale.services;
 import com.saudi_sale.models.CouponDataModel;
 import com.saudi_sale.models.DepartmentDataModel;
 import com.saudi_sale.models.ItemAddAdsDataModel;
+import com.saudi_sale.models.NotificationDataModel;
 import com.saudi_sale.models.PlaceGeocodeData;
 import com.saudi_sale.models.PlaceMapDetailsData;
 import com.saudi_sale.models.ProductsDataModel;
@@ -12,6 +13,8 @@ import com.saudi_sale.models.SingleProductDataModel;
 import com.saudi_sale.models.StatusResponse;
 import com.saudi_sale.models.TypeDataModel;
 import com.saudi_sale.models.UserModel;
+
+import org.androidannotations.annotations.rest.Post;
 
 import java.util.List;
 import java.util.Map;
@@ -179,7 +182,7 @@ public interface Service {
                                                  @Part MultipartBody.Part main_image,
                                                  @Part MultipartBody.Part vedio,
                                                  @Part List<MultipartBody.Part> images,
-                                                 @Part List<RequestBody> types,
+                                                 @Part("types[]") List<RequestBody> types,
                                                  @PartMap() Map<String, RequestBody> map
     );
 
@@ -199,7 +202,7 @@ public interface Service {
                                                        @Part("offer_value") RequestBody offer_value,
                                                        @Part MultipartBody.Part main_image,
                                                        @Part List<MultipartBody.Part> images,
-                                                       @Part List<RequestBody> types);
+                                                       @Part("types[]") List<RequestBody> types);
 
 
     @Multipart
@@ -217,7 +220,7 @@ public interface Service {
                                                     @Part("offer_value") RequestBody offer_value,
                                                     @Part MultipartBody.Part main_image,
                                                     @Part List<MultipartBody.Part> images,
-                                                    @Part List<RequestBody> types,
+                                                    @Part("types[]") List<RequestBody> types,
                                                     @PartMap() Map<String, RequestBody> map
 
     );
@@ -239,7 +242,7 @@ public interface Service {
                                                     @Part MultipartBody.Part main_image,
                                                     @Part MultipartBody.Part vedio,
                                                     @Part List<MultipartBody.Part> images,
-                                                    @Part List<RequestBody> types
+                                                    @Part("types[]") List<RequestBody> types
     );
 
     @FormUrlEncoded
@@ -272,6 +275,38 @@ public interface Service {
 
     @POST("api/logout")
     Call<StatusResponse> logout(@Header("Authorization") String user_token);
+
+
+    @GET("api/myProducts")
+    Call<ProductsDataModel> getMyProducts(@Header("Authorization") String user_token);
+
+    @FormUrlEncoded
+    @POST("api/deleteProduct")
+    Call<StatusResponse> deleteProduct(@Header("Authorization") String user_token,
+                                       @Field("product_id") int product_id
+
+    );
+
+    @GET("api/myFavouriteProducts")
+    Call<ProductsDataModel> getMyFavorite(@Header("Authorization") String user_token);
+
+
+    @GET("api/my-notifications")
+    Call<NotificationDataModel> getNotification(@Header("Authorization") String user_token);
+
+    @FormUrlEncoded
+    @POST("api/notification/remove")
+    Call<StatusResponse> deleteNotification(@Header("Authorization") String user_token,
+                                            @Field("notification_id") int notification_id
+    );
+
+    @FormUrlEncoded
+    @POST("api/contactUs")
+    Call<StatusResponse> contactUs(@Field("name") String name,
+                                   @Field("email") String email,
+                                   @Field("phone") String phone,
+                                   @Field("message") String message
+    );
 
 
 }

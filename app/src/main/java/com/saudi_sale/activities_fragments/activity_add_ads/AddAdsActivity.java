@@ -64,6 +64,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.FragmentMapTouchListener;
+import com.saudi_sale.activities_fragments.activite_swear.SwearActivity;
 import com.saudi_sale.activities_fragments.activity_department_details.DepartmentDetailsActivity;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
 import com.saudi_sale.adapters.ImageAdsAdapter;
@@ -319,6 +320,18 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
             }
         });
 
+        binding.checkboxSwear.setOnClickListener(view -> {
+            if (binding.checkboxSwear.isChecked()){
+                model.setSwear(true);
+                Intent intent = new Intent(this, SwearActivity.class);
+                startActivity(intent);
+            }else {
+                model.setSwear(false);
+
+            }
+
+            binding.setModel(model);
+        });
         binding.flUploadImage.setOnClickListener(view -> {
             openSheet();
         });
@@ -971,7 +984,7 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
         List<MultipartBody.Part> parts = new ArrayList<>();
         for (String path : imagesUriList) {
             Uri uri = Uri.parse(path);
-            MultipartBody.Part part = Common.getMultiPart(this, uri, "multi_image[]");
+            MultipartBody.Part part = Common.getMultiPart(this, uri, "images[]");
             parts.add(part);
         }
         return parts;
