@@ -9,6 +9,7 @@ import com.saudi_sale.models.PlaceGeocodeData;
 import com.saudi_sale.models.PlaceMapDetailsData;
 import com.saudi_sale.models.ProductsDataModel;
 import com.saudi_sale.models.RoomDataModel;
+import com.saudi_sale.models.RoomDataModel2;
 import com.saudi_sale.models.SingleCouponModel;
 import com.saudi_sale.models.SingleMessageDataModel;
 import com.saudi_sale.models.SingleProductDataModel;
@@ -310,9 +311,10 @@ public interface Service {
                                    @Field("message") String message
     );
 
-    @GET("api/single-chat-room")
+    @FormUrlEncoded
+    @POST("api/single-chat-room")
     Call<MessageDataModel> getChatMessages(@Header("Authorization") String bearer_token,
-                                           @Query(value = "room_id") int room_id
+                                           @Field("room_id") int room_id
 
     );
 
@@ -336,10 +338,15 @@ public interface Service {
                                                     @Part("from_user_id") RequestBody from_user_id,
                                                     @Part("to_user_id") RequestBody to_user_id,
                                                     @Part("message_kind") RequestBody message_kind,
-                                                    @Part("message") RequestBody message,
                                                     @Part("date") RequestBody date,
                                                     @Part MultipartBody.Part attachment
     );
 
 
+    @FormUrlEncoded
+    @POST("api/chatRoom/get")
+    Call<RoomDataModel2> createRoom(@Header("Authorization") String user_token,
+                                    @Field("from_user_id") int from_user_id,
+                                    @Field("to_user_id") int to_user_id
+    );
 }

@@ -115,6 +115,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".activities_fragments.activity_chat.ServiceUploadAttachment"/>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_key" />

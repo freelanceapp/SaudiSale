@@ -69,6 +69,7 @@ public class MessageModel implements Serializable {
         private int id;
         private int first_user_id;
         private int second_user_id;
+        public String is_approved;
 
         public int getId() {
             return id;
@@ -86,7 +87,6 @@ public class MessageModel implements Serializable {
             return is_approved;
         }
 
-        public String is_approved;
 
     }
 

@@ -1,5 +1,6 @@
 package com.saudi_sale.activities_fragments.activity_product_details;
 
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -17,17 +18,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 
 import com.saudi_sale.R;
+import com.saudi_sale.activities_fragments.activity_chat.ChatActivity;
+import com.saudi_sale.activities_fragments.activity_notification.NotificationActivity;
 import com.saudi_sale.adapters.ProductDetailsAdapter;
 import com.saudi_sale.adapters.SliderAdapter;
 import com.saudi_sale.databinding.ActivityProductDetailsBinding;
 import com.saudi_sale.language.Language;
+import com.saudi_sale.models.ChatUserModel;
+import com.saudi_sale.models.MessageModel;
 import com.saudi_sale.models.ProductImageModel;
 import com.saudi_sale.models.ProductModel;
+import com.saudi_sale.models.RoomDataModel;
+import com.saudi_sale.models.RoomDataModel2;
 import com.saudi_sale.models.SingleProductDataModel;
 import com.saudi_sale.models.StatusResponse;
 import com.saudi_sale.models.UserModel;
 import com.saudi_sale.preferences.Preferences;
 import com.saudi_sale.remote.Api;
+import com.saudi_sale.share.Common;
 import com.saudi_sale.tags.Tags;
 
 import java.io.IOException;
@@ -140,10 +148,84 @@ public class ProductDetailsActivity extends AppCompatActivity {
             finish();
         });
 
+        binding.llChat.setOnClickListener(view -> {
+            createChat();
+        });
+
         getProductById();
     }
 
-    private void getProductById() {
+    private void createChat() {
+        try {
+            ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+            Api.getService(Tags.base_url)
+                    .createRoom("Bearer " + userModel.getData().getToken(), userModel.getData().getId(), productModel.getUser().getId())
+                    .enqueue(new Callback<RoomDataModel2>() {
+                        @Override
+                        public void onResponse(Call<RoomDataModel2> call, Response<RoomDataModel2> response) {
+                            dialog.dismiss();
+                            if (response.isSuccessful()) {
+
+                                if (response.body() != null && response.body().getStatus() == 200) {
+                                    navigateToChatActivity(response.body().getData());
+                                } else {
+                                    Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                }
+
+                            } else {
+                                dialog.dismiss();
+                                if (response.code() == 500) {
+                                    Toast.makeText(ProductDetailsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+
+
+                                } else {
+                                    Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                    try {
+
+                                        Log.e("error", response.code() + "_" + response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<RoomDataModel2> call, Throwable t) {
+                            try {
+                                dialog.dismiss();
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage());
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(ProductDetailsActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(ProductDetailsActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                            } catch (Exception e) {
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void navigateToChatActivity(MessageModel.RoomModel data) {
+        ChatUserModel chatUserModel = new ChatUserModel(productModel.getUser().getId(), productModel.getUser().getName(), productModel.getUser().getLogo(), data.getId());
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("data", chatUserModel);
+        startActivity(intent);
+    }
+
+    private void getProductById()
+    {
 
         try {
             binding.scrollView.setVisibility(View.GONE);
@@ -393,98 +475,97 @@ public class ProductDetailsActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.please_sign_in_or_sign_up), Toast.LENGTH_SHORT).show();
             return;
         }
-            try {
-                Api.getService(Tags.base_url)
-                        .report("Bearer " + userModel.getData().getToken(), product_id, "0")
-                        .enqueue(new Callback<StatusResponse>() {
-                            @Override
-                            public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
-                                if (response.isSuccessful()) {
-                                    if (response.body().getStatus() == 200) {
-                                        if (isReport) {
-                                            productModel.setIs_report("no");
-                                            binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.gray4));
+        try {
+            Api.getService(Tags.base_url)
+                    .report("Bearer " + userModel.getData().getToken(), product_id, "0")
+                    .enqueue(new Callback<StatusResponse>() {
+                        @Override
+                        public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
+                            if (response.isSuccessful()) {
+                                if (response.body().getStatus() == 200) {
+                                    if (isReport) {
+                                        productModel.setIs_report("no");
+                                        binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.gray4));
 
 
-                                        } else {
-                                            productModel.setIs_report("yes");
-                                            binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.colorPrimary));
-
-                                        }
                                     } else {
-
-                                        if (isReport) {
-                                            productModel.setIs_report("yes");
-
-
-                                        } else {
-                                            productModel.setIs_report("no");
-
-                                        }
-
-                                        Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                        productModel.setIs_report("yes");
+                                        binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.colorPrimary));
 
                                     }
                                 } else {
 
                                     if (isReport) {
                                         productModel.setIs_report("yes");
-                                        binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.colorPrimary));
 
 
                                     } else {
                                         productModel.setIs_report("no");
-                                        binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.gray4));
-
 
                                     }
-                                    if (response.code() == 500) {
-                                        Toast.makeText(ProductDetailsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+
+                                    Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                }
+                            } else {
+
+                                if (isReport) {
+                                    productModel.setIs_report("yes");
+                                    binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.colorPrimary));
 
 
-                                    } else {
-                                        Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    productModel.setIs_report("no");
+                                    binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.gray4));
 
-                                        try {
 
-                                            Log.e("error", response.code() + "_" + response.errorBody().string());
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+                                }
+                                if (response.code() == 500) {
+                                    Toast.makeText(ProductDetailsActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+
+
+                                } else {
+                                    Toast.makeText(ProductDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                    try {
+
+                                        Log.e("error", response.code() + "_" + response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
                                     }
                                 }
                             }
+                        }
 
-                            @Override
-                            public void onFailure(Call<StatusResponse> call, Throwable t) {
-                                try {
-                                    if (isReport) {
-                                        productModel.setIs_report("yes");
-                                        binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.colorPrimary));
-
-
-                                    } else {
-                                        productModel.setIs_report("no");
-                                        binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.gray4));
+                        @Override
+                        public void onFailure(Call<StatusResponse> call, Throwable t) {
+                            try {
+                                if (isReport) {
+                                    productModel.setIs_report("yes");
+                                    binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.colorPrimary));
 
 
-                                    }
-                                    if (t.getMessage() != null) {
-                                        Log.e("error", t.getMessage());
-                                        if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                            Toast.makeText(ProductDetailsActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(ProductDetailsActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
+                                } else {
+                                    productModel.setIs_report("no");
+                                    binding.imgWarning.setColorFilter(ContextCompat.getColor(ProductDetailsActivity.this, R.color.gray4));
 
-                                } catch (Exception e) {
+
                                 }
-                            }
-                        });
-            } catch (Exception e) {
-            }
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage());
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(ProductDetailsActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(ProductDetailsActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
 
+                            } catch (Exception e) {
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+        }
 
 
     }

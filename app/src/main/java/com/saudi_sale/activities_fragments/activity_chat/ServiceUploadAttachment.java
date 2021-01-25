@@ -47,7 +47,7 @@ public class ServiceUploadAttachment extends Service {
         file_uri = intent.getStringExtra("file_uri");
         user_token = intent.getStringExtra("user_token");
         user_id = intent.getIntExtra("user_id",0);
-        to_user_id = intent.getIntExtra("t0_user_id",0);
+        to_user_id = intent.getIntExtra("to_user_id",0);
         room_id = intent.getIntExtra("room_id",0);
         attachment_type = intent.getStringExtra("attachment_type");
 
@@ -59,6 +59,7 @@ public class ServiceUploadAttachment extends Service {
     private void uploadAttachment(String attachment_type) {
         Calendar calendar = Calendar.getInstance();
         long date = calendar.getTimeInMillis();
+        Log.e("ddd","ddd");
 
         RequestBody to_user_id_part = Common.getRequestBodyText(String.valueOf(to_user_id));
         RequestBody user_id_part = Common.getRequestBodyText(String.valueOf(user_id));
@@ -68,17 +69,28 @@ public class ServiceUploadAttachment extends Service {
         RequestBody date_part = Common.getRequestBodyText(String.valueOf(date));
 
         MultipartBody.Part file_part;
-        file_part = Common.getMultiPartImage(this, Uri.parse(file_uri), "file");
+        file_part = Common.getMultiPartImage(this, Uri.parse(file_uri), "file_link");
 
-        Api.getService(Tags.base_url).sendChatAttachment("Bearer "+user_token, room_id_part, user_id_part,to_user_id_part,type_part,message_part,date_part,file_part)
+
+        Log.e("data",to_user_id+"__"+user_id+"__"+room_id+"__"+attachment_type+"__"+date);
+
+
+        Api.getService(Tags.base_url).sendChatAttachment("Bearer "+user_token, room_id_part, user_id_part,to_user_id_part,type_part,date_part,file_part)
                 .enqueue(new Callback<SingleMessageDataModel>() {
                     @Override
                     public void onResponse(Call<SingleMessageDataModel> call, Response<SingleMessageDataModel> response) {
-                        stopSelf();
-                        if (response.isSuccessful() && response.body() != null) {
+                        if (response.isSuccessful()) {
 
-                            MessageModel model = response.body().getData();
-                            EventBus.getDefault().post(model);
+                            if (response.body()!=null&&response.body().getStatus()==200){
+                                MessageModel model = response.body().getData();
+                                EventBus.getDefault().post(model);
+                                stopSelf();
+                            }else {
+                                Toast.makeText(ServiceUploadAttachment.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                Log.e("11","11");
+                            }
+
+
                         } else {
 
                             if (response.code() == 500) {

@@ -1,5 +1,6 @@
 package com.saudi_sale.activities_fragments.activity_home.fragments;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -183,7 +184,15 @@ public class Fragment_Chat extends Fragment {
         ChatUserModel chatUserModel = new ChatUserModel(chat_user_id, roomModel.getOther_user_name(), roomModel.getOther_user_logo(), roomModel.getId());
         Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra("data", chatUserModel);
-        startActivity(intent);
+        startActivityForResult(intent, 100);
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            getRooms();
+        }
     }
 }

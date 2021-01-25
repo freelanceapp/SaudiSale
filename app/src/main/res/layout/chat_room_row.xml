@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:textColor="@color/gray6"
-                    android:text='@{model.last_message_type.equals("text")?model.last_message:(model.last_message_type.equals("textWithFile")?model.last_message:@string/photo_sent)}'
+                    android:text='@{model.last_message_type.equals("text")?model.last_message:(model.last_message_type.equals("file")?@string/photo_sent:model.last_message)}'
                     android:singleLine="true"
 
                     />

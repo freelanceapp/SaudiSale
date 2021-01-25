@@ -72,6 +72,7 @@ public class ChatActivity extends AppCompatActivity {
     private Preferences preferences;
     private ChatAdapter adapter;
     private List<MessageModel> messageModelList;
+    private boolean isDataChanged = false;
 
 
     @Override
@@ -119,8 +120,6 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
-
-
         binding.imageChooser.setOnClickListener(v -> {
             checkGalleryPermission();
 
@@ -156,16 +155,16 @@ public class ChatActivity extends AppCompatActivity {
                         binding.progBar.setVisibility(View.GONE);
                         if (response.isSuccessful()) {
 
-                            if (response.body() != null && response.body().getStatus()==200) {
+                            if (response.body() != null && response.body().getStatus() == 200) {
 
-                                if (response.body().getData().size() > 0) {
+                                if (response.body().getData().getMessages().size() > 0) {
                                     messageModelList.clear();
-                                    messageModelList.addAll(response.body().getData());
+                                    messageModelList.addAll(response.body().getData().getMessages());
                                     adapter.notifyDataSetChanged();
                                     binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 200);
 
                                 }
-                            }else {
+                            } else {
                                 Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
 
                             }
@@ -214,8 +213,8 @@ public class ChatActivity extends AppCompatActivity {
         intent.putExtra("file_uri", file_uri);
         intent.putExtra("user_token", userModel.getData().getToken());
         intent.putExtra("user_id", userModel.getData().getId());
-        intent.putExtra("to_user_id",chatUserModel.getId());
-        intent.putExtra("room_id", chatUserModel.getId());
+        intent.putExtra("to_user_id", chatUserModel.getId());
+        intent.putExtra("room_id", chatUserModel.getRoom_id());
         intent.putExtra("attachment_type", attachment_type);
         startService(intent);
 
@@ -223,26 +222,37 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendChatText(String message) {
+        long date = Calendar.getInstance().getTimeInMillis();
+        Log.e("data", chatUserModel.getId() + "__" + userModel.getData().getId() + "__" + chatUserModel.getRoom_id() + "_" + date);
 
         Api.getService(Tags.base_url)
-                .sendChatMessage("Bearer " + userModel.getData().getToken(), chatUserModel.getRoom_id(), userModel.getData().getId(), chatUserModel.getId(),"text", Calendar.getInstance().getTimeInMillis(), message)
+                .sendChatMessage("Bearer " + userModel.getData().getToken(), chatUserModel.getRoom_id(), userModel.getData().getId(), chatUserModel.getId(), "text", date, message)
                 .enqueue(new Callback<SingleMessageDataModel>() {
                     @Override
                     public void onResponse(Call<SingleMessageDataModel> call, Response<SingleMessageDataModel> response) {
-                        binding.progBar.setVisibility(View.GONE);
                         if (response.isSuccessful()) {
 
-                            if (response.body() != null && response.body().getStatus()==200) {
+                            if (response.body() != null && response.body().getStatus() == 200) {
+                                isDataChanged = true;
                                 MessageModel model = response.body().getData();
                                 messageModelList.add(model);
                                 adapter.notifyItemInserted(messageModelList.size());
                                 binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 200);
-                            }else {
+                            } else {
                                 Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
 
                             }
 
 
+                        } else {
+
+                            try {
+                                Log.e("error", response.code() + "___" + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
 
                         }
 
@@ -251,7 +261,6 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<SingleMessageDataModel> call, Throwable t) {
                         try {
-                            binding.progBar.setVisibility(View.GONE);
                             if (t.getMessage() != null) {
                                 Log.e("Error", t.getMessage());
 
@@ -367,17 +376,15 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAttachmentSuccess(MessageModel messageModel) {
+        isDataChanged = true;
         messageModelList.add(messageModel);
         adapter.notifyItemChanged(messageModelList.size());
         binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 200);
 
 
     }
-
 
 
     @Override
@@ -387,6 +394,9 @@ public class ChatActivity extends AppCompatActivity {
 
     public void back() {
         preferences.create_room_id(this, "");
+        if (isDataChanged) {
+            setResult(RESULT_OK);
+        }
         finish();
     }
 

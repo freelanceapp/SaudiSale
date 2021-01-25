@@ -4,9 +4,18 @@ import java.io.Serializable;
 import java.util.List;
 
 public class MessageDataModel extends StatusResponse implements Serializable {
-    private List<MessageModel> data;
+    private Data data;
 
-    public List<MessageModel> getData() {
+    public Data getData() {
         return data;
     }
+
+    public static class Data implements Serializable{
+        private List<MessageModel> messages;
+
+        public List<MessageModel> getMessages() {
+            return messages;
+        }
+    }
+
 }
