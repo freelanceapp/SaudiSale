@@ -117,6 +117,7 @@
     <string name="send">إرسال</string>
     <string name="general_settings">الإعدادت العامة</string>
     <string name="change_language">تغيير اللغة</string>
-    <string name="next">Next</string>
+    <string name="next">التالي</string>
+    <string name="type_a_message">إكتب رسالة...</string>
 
 </resources>

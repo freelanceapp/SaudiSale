@@ -3,12 +3,14 @@ package com.saudi_sale.services;
 import com.saudi_sale.models.CouponDataModel;
 import com.saudi_sale.models.DepartmentDataModel;
 import com.saudi_sale.models.ItemAddAdsDataModel;
+import com.saudi_sale.models.MessageDataModel;
 import com.saudi_sale.models.NotificationDataModel;
 import com.saudi_sale.models.PlaceGeocodeData;
 import com.saudi_sale.models.PlaceMapDetailsData;
 import com.saudi_sale.models.ProductsDataModel;
 import com.saudi_sale.models.RoomDataModel;
 import com.saudi_sale.models.SingleCouponModel;
+import com.saudi_sale.models.SingleMessageDataModel;
 import com.saudi_sale.models.SingleProductDataModel;
 import com.saudi_sale.models.StatusResponse;
 import com.saudi_sale.models.TypeDataModel;
@@ -306,6 +308,37 @@ public interface Service {
                                    @Field("email") String email,
                                    @Field("phone") String phone,
                                    @Field("message") String message
+    );
+
+    @GET("api/single-chat-room")
+    Call<MessageDataModel> getChatMessages(@Header("Authorization") String bearer_token,
+                                           @Query(value = "room_id") int room_id
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/message/send")
+    Call<SingleMessageDataModel> sendChatMessage(@Header("Authorization") String bearer_token,
+                                                 @Field("room_id") int room_id,
+                                                 @Field("from_user_id") int from_user_id,
+                                                 @Field("to_user_id") int to_user_id,
+                                                 @Field("message_kind") String message_kind,
+                                                 @Field("date") long date,
+                                                 @Field("message") String message
+
+
+    );
+
+    @Multipart
+    @POST("api/message/send")
+    Call<SingleMessageDataModel> sendChatAttachment(@Header("Authorization") String bearer_token,
+                                                    @Part("room_id") RequestBody room_id,
+                                                    @Part("from_user_id") RequestBody from_user_id,
+                                                    @Part("to_user_id") RequestBody to_user_id,
+                                                    @Part("message_kind") RequestBody message_kind,
+                                                    @Part("message") RequestBody message,
+                                                    @Part("date") RequestBody date,
+                                                    @Part MultipartBody.Part attachment
     );
 
 

@@ -119,5 +119,6 @@
     <string name="general_settings">General Settings</string>
     <string name="change_language">Change language</string>
     <string name="next">Next</string>
+    <string name="type_a_message">Type a message...</string>
 
 </resources>

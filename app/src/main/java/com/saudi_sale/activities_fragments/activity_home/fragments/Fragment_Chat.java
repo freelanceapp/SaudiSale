@@ -22,9 +22,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.saudi_sale.R;
+import com.saudi_sale.activities_fragments.activity_chat.ChatActivity;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
 import com.saudi_sale.adapters.RoomAdapter;
 import com.saudi_sale.databinding.FragmentChatBinding;
+import com.saudi_sale.models.ChatUserModel;
 import com.saudi_sale.models.DepartmentDataModel;
 import com.saudi_sale.models.RoomDataModel;
 import com.saudi_sale.models.RoomModel;
@@ -83,7 +85,7 @@ public class Fragment_Chat extends Fragment {
         lang = Paper.book().read("lang", Locale.getDefault().getLanguage());
         binding.setLang(lang);
         binding.recView.setLayoutManager(new LinearLayoutManager(activity));
-        adapter = new RoomAdapter(roomModelList,activity,this);
+        adapter = new RoomAdapter(roomModelList, activity, this);
         binding.recView.setAdapter(adapter);
         binding.swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         getRooms();
@@ -91,10 +93,10 @@ public class Fragment_Chat extends Fragment {
 
     }
 
-    private void getRooms(){
+    private void getRooms() {
         try {
             userModel = preferences.getUserData(activity);
-            if (userModel==null){
+            if (userModel == null) {
                 binding.progBar.setVisibility(View.GONE);
                 binding.swipeRefresh.setRefreshing(false);
                 binding.tvNoConversation.setVisibility(View.VISIBLE);
@@ -102,24 +104,24 @@ public class Fragment_Chat extends Fragment {
                 return;
             }
             Api.getService(Tags.base_url)
-                    .getRooms("Bearer "+userModel.getData().getToken(),userModel.getData().getId())
+                    .getRooms("Bearer " + userModel.getData().getToken(), userModel.getData().getId())
                     .enqueue(new Callback<RoomDataModel>() {
                         @Override
                         public void onResponse(Call<RoomDataModel> call, Response<RoomDataModel> response) {
                             binding.progBar.setVisibility(View.GONE);
                             binding.swipeRefresh.setRefreshing(false);
-                            if (response.isSuccessful() && response.body() != null ) {
-                                if (response.body().getStatus()==200){
-                                    if (response.body().getData().size()>0){
+                            if (response.isSuccessful() && response.body() != null) {
+                                if (response.body().getStatus() == 200) {
+                                    if (response.body().getData().size() > 0) {
                                         roomModelList.clear();
                                         roomModelList.addAll(response.body().getData());
                                         adapter.notifyDataSetChanged();
                                         binding.tvNoConversation.setVisibility(View.GONE);
-                                    }else {
+                                    } else {
                                         binding.tvNoConversation.setVisibility(View.VISIBLE);
 
                                     }
-                                }else {
+                                } else {
                                     Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             } else {
@@ -171,6 +173,17 @@ public class Fragment_Chat extends Fragment {
 
 
     public void setRoomDate(RoomModel roomModel) {
+        int chat_user_id;
+        if (userModel.getData().getId() == roomModel.getFirst_user_id()) {
+            chat_user_id = roomModel.getSecond_user_id();
+        } else {
+            chat_user_id = roomModel.getFirst_user_id();
+
+        }
+        ChatUserModel chatUserModel = new ChatUserModel(chat_user_id, roomModel.getOther_user_name(), roomModel.getOther_user_logo(), roomModel.getId());
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra("data", chatUserModel);
+        startActivity(intent);
 
     }
 }
