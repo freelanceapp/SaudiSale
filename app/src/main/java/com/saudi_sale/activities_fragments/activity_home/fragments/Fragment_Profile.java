@@ -16,12 +16,14 @@ import androidx.fragment.app.Fragment;
 
 import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.activity_add_ads.AddAdsActivity;
+import com.saudi_sale.activities_fragments.activity_chat_us.ChatUsActivity;
 import com.saudi_sale.activities_fragments.activity_commission.CommissionActivity;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
 import com.saudi_sale.activities_fragments.activity_my_ads.MyAdsActivity;
 import com.saudi_sale.activities_fragments.activity_my_coupon.MyCouponsActivity;
 import com.saudi_sale.activities_fragments.activity_my_favorite.MyFavoriteActivity;
 import com.saudi_sale.activities_fragments.activity_setting.SettingActivity;
+import com.saudi_sale.activities_fragments.activity_sign_up.SignUpActivity;
 import com.saudi_sale.activity_contact_us.ContactUsActivity;
 import com.saudi_sale.databinding.FragmentProfileBinding;
 import com.saudi_sale.interfaces.Listeners;
@@ -69,9 +71,6 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
 
     }
-
-
-
 
 
     @Override
@@ -129,6 +128,20 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
         startActivityForResult(intent, 300);
     }
 
+    @Override
+    public void onChatUs() {
+        Intent intent = new Intent(activity, ChatUsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onUpdateProfile() {
+        if (userModel != null) {
+            Intent intent = new Intent(activity, SignUpActivity.class);
+            startActivityForResult(intent, 400);
+        }
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -140,9 +153,12 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
         } else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
             activity.refreshFragmentOffers();
 
-        }else if (requestCode == 300 && resultCode == Activity.RESULT_OK&&data!=null) {
+        } else if (requestCode == 300 && resultCode == Activity.RESULT_OK && data != null) {
             String lang = data.getStringExtra("lang");
             activity.refreshActivity(lang);
+        } else if (requestCode == 400 && resultCode == Activity.RESULT_OK) {
+            userModel = preferences.getUserData(activity);
+            binding.setModel(userModel);
         }
     }
 }

@@ -120,5 +120,12 @@
     <string name="change_language">Change language</string>
     <string name="next">Next</string>
     <string name="type_a_message">Type a message...</string>
+    <string name="chat_us">Chat us</string>
+    <string name="chat_with_admin">Chat with admin</string>
+    <string name="social_media">Follow us on social media</string>
+    <string name="inv_url">Invalid url</string>
+    <string name="admin">Admin</string>
+    <string name="update_profile">Update profile</string>
+    <string name="image_uploded">image uploaded</string>
 
 </resources>

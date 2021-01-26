@@ -1,5 +1,7 @@
 package com.saudi_sale.services;
 
+import com.saudi_sale.models.AdminMessageDataModel;
+import com.saudi_sale.models.AdminRoomDataModel;
 import com.saudi_sale.models.CouponDataModel;
 import com.saudi_sale.models.DepartmentDataModel;
 import com.saudi_sale.models.ItemAddAdsDataModel;
@@ -10,6 +12,8 @@ import com.saudi_sale.models.PlaceMapDetailsData;
 import com.saudi_sale.models.ProductsDataModel;
 import com.saudi_sale.models.RoomDataModel;
 import com.saudi_sale.models.RoomDataModel2;
+import com.saudi_sale.models.SettingDataModel;
+import com.saudi_sale.models.SingleAdminMessageDataModel;
 import com.saudi_sale.models.SingleCouponModel;
 import com.saudi_sale.models.SingleMessageDataModel;
 import com.saudi_sale.models.SingleProductDataModel;
@@ -79,6 +83,34 @@ public interface Service {
                                     @Part("longitude") RequestBody longitude,
                                     @Part("software_type") RequestBody software_type,
                                     @Part MultipartBody.Part logo
+
+
+    );
+
+
+    @FormUrlEncoded
+    @POST("api/updateProfile")
+    Call<UserModel> updateProfileWithoutImage(@Header("Authorization") String bearer_token,
+                                              @Field("name") String name,
+                                              @Field("phone_code") String phone_code,
+                                              @Field("phone") String phone,
+                                              @Field("address") String address,
+                                              @Field("latitude") double latitude,
+                                              @Field("longitude") double longitude,
+                                              @Field("software_type") String software_type
+    );
+
+    @Multipart
+    @POST("api/updateProfile")
+    Call<UserModel> updateProfileWithImage(@Header("Authorization") String bearer_token,
+                                           @Part("name") RequestBody name,
+                                           @Part("phone_code") RequestBody phone_code,
+                                           @Part("phone") RequestBody phone,
+                                           @Part("address") RequestBody address,
+                                           @Part("latitude") RequestBody latitude,
+                                           @Part("longitude") RequestBody longitude,
+                                           @Part("software_type") RequestBody software_type,
+                                           @Part MultipartBody.Part logo
 
 
     );
@@ -349,4 +381,42 @@ public interface Service {
                                     @Field("from_user_id") int from_user_id,
                                     @Field("to_user_id") int to_user_id
     );
+
+
+    @GET("api/adminChatRoomGet")
+    Call<AdminRoomDataModel> createAdminRoom(@Header("Authorization") String user_token
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/allChatRoomData")
+    Call<AdminMessageDataModel> getAdminChatMessage(@Header("Authorization") String user_token,
+                                                    @Field("room_id") int from_user_id);
+
+
+    @FormUrlEncoded
+    @POST("api/sendMessageToAdmin")
+    Call<SingleAdminMessageDataModel> sendAdminChatMessage(@Header("Authorization") String bearer_token,
+                                                           @Field("room_id") int room_id,
+                                                           @Field("message_kind") String message_kind,
+                                                           @Field("date") long date,
+                                                           @Field("message") String message
+
+
+    );
+
+    @Multipart
+    @POST("api/sendMessageToAdmin")
+    Call<SingleAdminMessageDataModel> sendAdminChatAttachment(@Header("Authorization") String bearer_token,
+                                                              @Part("room_id") RequestBody room_id,
+                                                              @Part("message_kind") RequestBody message_kind,
+                                                              @Part("date") RequestBody date,
+                                                              @Part MultipartBody.Part attachment
+    );
+
+
+    @GET("api/app/info")
+    Call<SettingDataModel> getSettings();
+
+
 }

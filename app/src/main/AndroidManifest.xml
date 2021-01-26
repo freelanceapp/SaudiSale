@@ -24,6 +24,16 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+
+        <activity
+            android:name=".activities_fragments.activity_chat_admin.ChatAdminActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity
+            android:name=".activities_fragments.activity_chat_us.ChatUsActivity"
+            android:configChanges="keyboardHidden|screenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_chat.ChatActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
@@ -115,7 +125,19 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".activities_fragments.activity_chat.ServiceUploadAttachment"/>
+        <service android:name=".activities_fragments.activity_chat.ServiceUploadAttachment" />
+
+        <service android:name=".activities_fragments.activity_chat_admin.ServiceUploadAttachmentAdmin" />
+
+        <service
+            android:name=".activities_fragments.notifications.FireBaseMessaging"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -99,18 +99,26 @@ public class NotificationActivity extends AppCompatActivity {
                         public void onResponse(Call<NotificationDataModel> call, Response<NotificationDataModel> response) {
                             binding.swipeRefresh.setRefreshing(false);
                             binding.progBar.setVisibility(View.GONE);
-                            if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                                notificationModelList.clear();
-                                notificationModelList.addAll(response.body().getData());
-                                if (notificationModelList.size() > 0) {
+                            if (response.isSuccessful() ) {
 
-                                    adapter.notifyDataSetChanged();
+                                if (response.body()!=null&&response.body().getStatus()==200){
+                                    notificationModelList.clear();
+                                    notificationModelList.addAll(response.body().getData());
+                                    if (notificationModelList.size() > 0) {
 
-                                    binding.tvNoData.setVisibility(View.GONE);
-                                } else {
-                                    binding.tvNoData.setVisibility(View.VISIBLE);
+                                        adapter.notifyDataSetChanged();
+
+                                        binding.tvNoData.setVisibility(View.GONE);
+                                    } else {
+                                        binding.tvNoData.setVisibility(View.VISIBLE);
+
+                                    }
+
+                                }else {
+                                    Toast.makeText(NotificationActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
 
                                 }
+
                             } else {
                                 binding.swipeRefresh.setRefreshing(false);
                                 binding.progBar.setVisibility(View.GONE);

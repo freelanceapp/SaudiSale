@@ -119,5 +119,12 @@
     <string name="change_language">تغيير اللغة</string>
     <string name="next">التالي</string>
     <string name="type_a_message">إكتب رسالة...</string>
+    <string name="chat_us">تواصل معنا</string>
+    <string name="chat_with_admin">المحادثة مع الإدارة</string>
+    <string name="social_media">تابعنا على مواقع التواصل</string>
+    <string name="inv_url">رابط غير صحيح</string>
+    <string name="admin">الإدارة</string>
+    <string name="update_profile">تعديل</string>
+    <string name="image_uploded">تم إرفاق صورة</string>
 
 </resources>

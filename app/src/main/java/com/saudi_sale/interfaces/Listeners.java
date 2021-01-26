@@ -14,6 +14,8 @@ public interface Listeners {
         void onCommission();
         void onLogout();
         void onSetting();
+        void onChatUs();
+        void onUpdateProfile();
 
 
     }

@@ -17,6 +17,21 @@ public class MessageModel implements Serializable {
     private UserModel.Data from_user;
     private UserModel.Data to_user;
 
+
+    public MessageModel(int id, int chat_room_id, int from_user_id, int to_user_id, String message_kind, String message, String file_link, long date, RoomModel room, UserModel.Data from_user, UserModel.Data to_user) {
+        this.id = id;
+        this.chat_room_id = chat_room_id;
+        this.from_user_id = from_user_id;
+        this.to_user_id = to_user_id;
+        this.message_kind = message_kind;
+        this.message = message;
+        this.file_link = file_link;
+        this.date = date;
+        this.room = room;
+        this.from_user = from_user;
+        this.to_user = to_user;
+    }
+
     public int getId() {
         return id;
     }
@@ -70,6 +85,16 @@ public class MessageModel implements Serializable {
         private int first_user_id;
         private int second_user_id;
         public String is_approved;
+
+
+        public RoomModel() {
+        }
+
+        public RoomModel(int id, int first_user_id, int second_user_id) {
+            this.id = id;
+            this.first_user_id = first_user_id;
+            this.second_user_id = second_user_id;
+        }
 
         public int getId() {
             return id;
