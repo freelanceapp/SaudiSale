@@ -249,10 +249,7 @@ public class FireBaseMessaging extends FirebaseMessagingService {
                 body = getString(R.string.image_uploded);
             }
 
-
             builder.setStyle(new NotificationCompat.BigTextStyle().bigText(body));
-
-
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
             taskStackBuilder.addNextIntent(intent);
@@ -260,7 +257,6 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             builder.setContentIntent(pendingIntent);
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_avatar);
             builder.setLargeIcon(bitmap);
-
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             if (manager != null) {
 

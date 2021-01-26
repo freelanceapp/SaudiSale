@@ -394,46 +394,6 @@
                     android:layout_marginEnd="2dp"
                     android:layout_marginBottom="3dp"
                     android:layout_weight="1"
-                    android:onClick="@{()->actions.onLogout()}"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="5dp"
-                    app:cardElevation="1dp"
-                    app:contentPadding="16dp"
-
-                    >
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_gravity="center"
-                            android:padding="8dp"
-                            android:src="@drawable/ic_logout" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="8dp"
-                            android:text="@string/logout"
-                            android:textColor="@color/black"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginBottom="3dp"
-                    android:layout_weight="1"
                     android:onClick="@{()->actions.onChatUs()}"
                     app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="5dp"
@@ -467,6 +427,47 @@
                             android:textSize="16sp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_weight="1"
+                    android:onClick="@{()->actions.onLogout()}"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="1dp"
+                    app:contentPadding="16dp"
+
+                    >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_gravity="center"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_logout" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/logout"
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
