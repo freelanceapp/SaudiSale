@@ -48,7 +48,7 @@ public class MyFavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             myHolder.itemView.setOnClickListener(view -> {
                 MyFavoriteActivity myFavoriteActivity = (MyFavoriteActivity) activity;
-                myFavoriteActivity.setProductItemData(list.get(myHolder.getAdapterPosition()));
+                myFavoriteActivity.setProductItemData(list.get(myHolder.getAdapterPosition()),myHolder.getAdapterPosition());
 
             });
 

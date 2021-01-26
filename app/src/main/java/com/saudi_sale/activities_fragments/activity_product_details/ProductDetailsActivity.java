@@ -59,6 +59,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private List<ProductModel.ProductDetail> productDetailsModelList;
     private SliderAdapter sliderAdapter;
     private List<ProductImageModel> productImageModelList;
+    private boolean isDataChanged = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -145,7 +146,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
             }
         });
         binding.llBack.setOnClickListener(view -> {
-            finish();
+            onBackPressed();
         });
 
         binding.llChat.setOnClickListener(view -> {
@@ -380,6 +381,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                                     if (isChecked) {
                                         productModel.setIs_favorite("yes");
                                         binding.checkFavorite.setChecked(true);
+                                        isDataChanged = true;
 
                                     } else {
                                         productModel.setIs_favorite("no");
@@ -571,4 +573,11 @@ public class ProductDetailsActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onBackPressed() {
+        if (isDataChanged){
+            setResult(RESULT_OK);
+        }
+        finish();
+    }
 }

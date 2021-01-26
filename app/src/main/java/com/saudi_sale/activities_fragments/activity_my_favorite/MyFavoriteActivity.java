@@ -1,5 +1,6 @@
 package com.saudi_sale.activities_fragments.activity_my_favorite;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -43,6 +44,7 @@ public class MyFavoriteActivity extends AppCompatActivity {
     private MyFavoriteAdapter adapter;
     private List<ProductModel> productModelList;
     private String lang;
+    private int selectedPos=-1;
 
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -143,10 +145,11 @@ public class MyFavoriteActivity extends AppCompatActivity {
 
     }
 
-    public void setProductItemData(ProductModel productModel) {
+    public void setProductItemData(ProductModel productModel, int adapterPosition) {
+        this.selectedPos = adapterPosition;
         Intent intent = new Intent(this, ProductDetailsActivity.class);
         intent.putExtra("product_id", productModel.getId());
-        startActivity(intent);
+        startActivityForResult(intent,100);
     }
 
     public void disLike(ProductModel productModel, int adapterPosition) {
@@ -216,6 +219,24 @@ public class MyFavoriteActivity extends AppCompatActivity {
                         }
                     });
         } catch (Exception e) {
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==100&&resultCode==RESULT_OK){
+            if (selectedPos!=-1){
+                productModelList.remove(selectedPos);
+                adapter.notifyItemRemoved(selectedPos);
+                if (productModelList.size()>0){
+                    binding.tvNoData.setVisibility(View.GONE);
+                }else {
+                    binding.tvNoData.setVisibility(View.VISIBLE);
+
+                }
+                selectedPos=-1;
+            }
         }
     }
 
