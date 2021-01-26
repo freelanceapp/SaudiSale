@@ -33,6 +33,7 @@ import com.saudi_sale.models.AdminMessageModel;
 import com.saudi_sale.models.AdminRoomModel;
 import com.saudi_sale.models.ChatUserModel;
 import com.saudi_sale.models.MessageModel;
+import com.saudi_sale.models.NotFireModel;
 import com.saudi_sale.models.RoomModel;
 import com.saudi_sale.models.UserModel;
 import com.saudi_sale.preferences.Preferences;
@@ -265,6 +266,7 @@ public class FireBaseMessaging extends FirebaseMessagingService {
 
                 manager.createNotificationChannel(channel);
                 manager.notify(Tags.not_tag, Tags.not_id, builder.build());
+                EventBus.getDefault().post(new NotFireModel(true));
 
             }
 
@@ -290,6 +292,7 @@ public class FireBaseMessaging extends FirebaseMessagingService {
 
                 manager.createNotificationChannel(channel);
                 manager.notify(Tags.not_tag, Tags.not_id, builder.build());
+                EventBus.getDefault().post(new NotFireModel(true));
 
 
             }

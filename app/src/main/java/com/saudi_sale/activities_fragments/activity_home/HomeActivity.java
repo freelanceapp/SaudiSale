@@ -658,9 +658,14 @@ public class HomeActivity extends AppCompatActivity {
     public void listenToNotifications(NotFireModel notFireModel) {
         if (userModel != null) {
             getNotificationCount();
+            if (fragment_chat!=null&&fragment_chat.isAdded()){
+                fragment_chat.getRooms();
+            }
 
         }
     }
+
+
 
     private void getNotificationCount() {
 
@@ -734,4 +739,6 @@ public class HomeActivity extends AppCompatActivity {
             fragment_offer.getData();
         }
     }
+
+
 }

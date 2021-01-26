@@ -94,7 +94,7 @@ public class Fragment_Chat extends Fragment {
 
     }
 
-    private void getRooms() {
+    public void getRooms() {
         try {
             userModel = preferences.getUserData(activity);
             if (userModel == null) {
