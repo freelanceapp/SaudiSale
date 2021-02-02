@@ -102,7 +102,7 @@
     <string name="select">إختر</string>
     <string name="suc">تم بنجاح!</string>
     <string name="coupon_valid">هل الكوبون يعمل؟</string>
-    <string name="already_read">لقد قرأت القسم</string>
+    <string name="already_read">الموافقة على الشروط والاحكام</string>
     <string name="done">تم</string>
     <string name="accept_terms">الموافقة على الشروط والاحكام</string>
     <string name="ad_price2">سعر الاعلان</string>
@@ -126,5 +126,12 @@
     <string name="admin">الإدارة</string>
     <string name="update_profile">تعديل</string>
     <string name="image_uploded">تم إرفاق صورة</string>
+    <string name="follow">متابعة</string>
+    <string name="last_seen">اخر ظهور</string>
+    <string name="date_of_join">تاريخ الإنضمام</string>
+    <string name="unfollow">إلغاء المتابعة</string>
+    <string name="paid_once">تم دفع العمولة مرة واحدة</string>
+    <string name="not_paid">لم يدفع من قبل</string>
+    <string name="paid_more_than_one">دفع اكثر من مرة</string>
 
 </resources>

@@ -11,6 +11,10 @@ public class UserModel extends StatusResponse implements Serializable {
         return data;
     }
 
+    public void setData(Data data) {
+        this.data = data;
+    }
+
     public static class Data implements Serializable {
        private int id;
        private String user_type;
@@ -30,7 +34,6 @@ public class UserModel extends StatusResponse implements Serializable {
        private String phone_is_shown;
        private String is_block;
        private String is_login;
-       private String  logout_time;
        private String forget_password_code;
        private String software_type;
        private String email_verified_at;
@@ -39,6 +42,10 @@ public class UserModel extends StatusResponse implements Serializable {
        private String updated_at;
        private String token;
        private String firebaseToken="";
+       private List<ProductModel> products;
+       private String follow_status;
+       private int user_paids_count;
+       private long logout_time;
 
         public int getId() {
             return id;
@@ -112,7 +119,7 @@ public class UserModel extends StatusResponse implements Serializable {
             return is_login;
         }
 
-        public String getLogout_time() {
+        public long getLogout_time() {
             return logout_time;
         }
 
@@ -150,6 +157,22 @@ public class UserModel extends StatusResponse implements Serializable {
 
         public void setFirebaseToken(String firebaseToken) {
             this.firebaseToken = firebaseToken;
+        }
+
+        public List<ProductModel> getProducts() {
+            return products;
+        }
+
+        public String getFollow_status() {
+            return follow_status;
+        }
+
+        public void setFollow_status(String follow_status) {
+            this.follow_status = follow_status;
+        }
+
+        public int getUser_paids_count() {
+            return user_paids_count;
         }
     }
 }

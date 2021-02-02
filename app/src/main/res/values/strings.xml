@@ -103,7 +103,7 @@
     <string name="select">Select</string>
     <string name="suc">Success!</string>
     <string name="coupon_valid">Coupon valid?</string>
-    <string name="already_read">Already read swear</string>
+    <string name="already_read">Accept terms and conditions</string>
     <string name="done">Done</string>
     <string name="accept_terms">Accept terms and conditions</string>
     <string name="ad_price2">Ad price</string>
@@ -127,5 +127,12 @@
     <string name="admin">Admin</string>
     <string name="update_profile">Update profile</string>
     <string name="image_uploded">image uploaded</string>
+    <string name="follow">Follow</string>
+    <string name="last_seen">Last seen</string>
+    <string name="date_of_join">Date of join</string>
+    <string name="unfollow">UnFollow</string>
+    <string name="paid_once">Paid once</string>
+    <string name="not_paid">Not paid</string>
+    <string name="paid_more_than_one">Paid more than one</string>
 
 </resources>

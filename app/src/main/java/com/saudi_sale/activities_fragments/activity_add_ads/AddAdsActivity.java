@@ -143,6 +143,7 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
     private AddAdsModel model;
     private Preferences preferences;
     private UserModel userModel;
+    private boolean isOffer = false;
 
 
     @Override
@@ -155,7 +156,16 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_ads);
+        getDataFromIntent();
+
         initView();
+    }
+
+    private void getDataFromIntent() {
+        Intent intent = getIntent();
+        if (intent.hasExtra("offer")){
+            isOffer = true;
+        }
     }
 
 
@@ -319,7 +329,6 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
 
             }
         });
-
         binding.checkboxSwear.setOnClickListener(view -> {
             if (binding.checkboxSwear.isChecked()){
                 model.setSwear(true);
@@ -348,6 +357,12 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
         binding.flUploadVideo.setOnClickListener(view -> {
             checkVideoPermission();
         });
+
+        if(isOffer){
+            binding.checkboxOffer.setVisibility(View.INVISIBLE);
+            model.setHave_offer("with_offer");
+            binding.expandLayout2.expand(true);
+        }
 
         binding.checkboxOffer.setOnClickListener(view -> {
             if (binding.checkboxOffer.isChecked()) {

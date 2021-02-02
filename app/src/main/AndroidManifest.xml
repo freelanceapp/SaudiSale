@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -25,12 +25,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-
+        <activity android:name=".activities_fragments.activity_profile_products.ProfileProductsActivity"></activity>
         <activity
             android:name=".activities_fragments.activity_chat_admin.ChatAdminActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".activities_fragments.activity_chat_us.ChatUsActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
@@ -127,9 +126,7 @@
         </activity>
 
         <service android:name=".activities_fragments.activity_chat.ServiceUploadAttachment" />
-
         <service android:name=".activities_fragments.activity_chat_admin.ServiceUploadAttachmentAdmin" />
-
         <service
             android:name=".activities_fragments.notifications.FireBaseMessaging"
             android:enabled="true"

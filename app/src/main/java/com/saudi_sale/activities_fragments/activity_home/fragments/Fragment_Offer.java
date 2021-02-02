@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 
 import com.saudi_sale.R;
+import com.saudi_sale.activities_fragments.activity_add_ads.AddAdsActivity;
 import com.saudi_sale.activities_fragments.activity_home.HomeActivity;
 import com.saudi_sale.activities_fragments.activity_product_details.ProductDetailsActivity;
 import com.saudi_sale.adapters.LatestOfferAdapter;
@@ -30,6 +31,7 @@ import com.saudi_sale.models.ProductsDataModel;
 import com.saudi_sale.models.UserModel;
 import com.saudi_sale.preferences.Preferences;
 import com.saudi_sale.remote.Api;
+import com.saudi_sale.share.Common;
 import com.saudi_sale.tags.Tags;
 
 import java.io.IOException;
@@ -86,6 +88,15 @@ public class Fragment_Offer extends Fragment {
         offerAdapter = new OfferAdapter(offerModelList, activity, this);
         binding.recViewOffer.setAdapter(offerAdapter);
 
+        binding.fab.setOnClickListener(v -> {
+            if (userModel==null){
+                Common.CreateDialogAlert(activity,getString(R.string.please_sign_in_or_sign_up));
+            }else {
+                Intent intent = new Intent(activity, AddAdsActivity.class);
+                intent.putExtra("offer",true);
+                startActivity(intent);
+            }
+        });
         getData();
 
     }

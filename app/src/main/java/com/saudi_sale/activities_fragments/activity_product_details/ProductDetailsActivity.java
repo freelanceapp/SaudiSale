@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.saudi_sale.R;
 import com.saudi_sale.activities_fragments.activity_chat.ChatActivity;
 import com.saudi_sale.activities_fragments.activity_notification.NotificationActivity;
+import com.saudi_sale.activities_fragments.activity_profile_products.ProfileProductsActivity;
 import com.saudi_sale.adapters.ProductDetailsAdapter;
 import com.saudi_sale.adapters.SliderAdapter;
 import com.saudi_sale.databinding.ActivityProductDetailsBinding;
@@ -145,6 +146,14 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
             }
         });
+
+
+        binding.image.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ProfileProductsActivity.class);
+            intent.putExtra("user_id", productModel.getUser().getId());
+            startActivity(intent);
+        });
+
         binding.llBack.setOnClickListener(view -> {
             onBackPressed();
         });
@@ -225,8 +234,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void getProductById()
-    {
+    private void getProductById() {
 
         try {
             binding.scrollView.setVisibility(View.GONE);
@@ -571,11 +579,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
 
     }
-
-
     @Override
     public void onBackPressed() {
-        if (isDataChanged){
+        if (isDataChanged) {
             setResult(RESULT_OK);
         }
         finish();

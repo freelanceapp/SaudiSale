@@ -190,6 +190,18 @@
                         android:text="@string/the_site_commission"
                         android:textStyle="bold"
                         />
+                    <Button
+                        android:id="@+id/btnNext"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@drawable/small_rounded_btn_primary"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:text="@string/next"
+                        />
                 </LinearLayout>
             </ScrollView>
         </LinearLayout>

@@ -7,6 +7,7 @@ import com.saudi_sale.models.DepartmentDataModel;
 import com.saudi_sale.models.ItemAddAdsDataModel;
 import com.saudi_sale.models.MessageDataModel;
 import com.saudi_sale.models.NotificationDataModel;
+import com.saudi_sale.models.OtherProfileDataModel;
 import com.saudi_sale.models.PlaceGeocodeData;
 import com.saudi_sale.models.PlaceMapDetailsData;
 import com.saudi_sale.models.ProductsDataModel;
@@ -419,4 +420,20 @@ public interface Service {
     Call<SettingDataModel> getSettings();
 
 
+    @FormUrlEncoded
+    @POST("api/profileOfOther")
+    Call<OtherProfileDataModel> getOtherProfile(@Header("Authorization") String bearer_token,
+                                                @Field("user_id") int user_id,
+                                                @Field("other_user_id") int other_user_id
+
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/followUserToggle")
+    Call<StatusResponse> follow_un_follow(@Header("Authorization") String bearer_token,
+                                          @Field("other_user_id") int other_user_id
+
+
+    );
 }
