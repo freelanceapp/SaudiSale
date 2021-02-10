@@ -368,7 +368,7 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
             model.setHave_offer("with_offer");
             binding.expandLayout2.expand(true);
         }else {
-            binding.checkboxOffer.setVisibility(View.VISIBLE);
+            binding.checkboxOffer.setVisibility(View.INVISIBLE);
             model.setHave_offer("without_offer");
             binding.expandLayout2.expand(false);
         }
