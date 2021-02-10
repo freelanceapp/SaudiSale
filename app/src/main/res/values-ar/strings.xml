@@ -89,7 +89,7 @@
     <string name="length_video_shouldnot_exceed">مدة الفيديو يجب الا تزيد عن 59 ثانية</string>
     <string name="add_offer">أضف عرض</string>
     <string name="price_after_offer">السعر بعد الخصم</string>
-    <string name="offer_value">قيمة العرض</string>
+    <string name="offer_value">قيمة الخصم</string>
     <string name="inv_value">قيمة العرض غير صحيحة</string>
     <string name="coupon_name">إسم الكوبون</string>
     <string name="brand_name">العلامة التجارية</string>

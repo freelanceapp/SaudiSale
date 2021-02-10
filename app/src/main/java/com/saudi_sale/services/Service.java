@@ -296,7 +296,7 @@ public interface Service {
 
     @FormUrlEncoded
     @POST("api/firebase-tokens")
-    Call<StatusResponse> updateFirebaseToken(@Field("firebase_token") String firebase_token,
+    Call<StatusResponse> updateFirebaseToken(@Field("phone_token") String phone_token,
                                              @Field("user_id") int user_id,
                                              @Field("software_type") String software_type
 

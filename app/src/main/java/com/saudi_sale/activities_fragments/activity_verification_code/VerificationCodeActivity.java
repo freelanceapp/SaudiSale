@@ -180,6 +180,8 @@ public class VerificationCodeActivity extends AppCompatActivity {
                     Toast.makeText(this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                 }
             });
+        }else {
+            Toast.makeText(this,"wait sms", Toast.LENGTH_SHORT).show();
         }
 
     }

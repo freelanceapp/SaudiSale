@@ -332,8 +332,13 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
         binding.checkboxSwear.setOnClickListener(view -> {
             if (binding.checkboxSwear.isChecked()){
                 model.setSwear(true);
-                Intent intent = new Intent(this, SwearActivity.class);
-                startActivity(intent);
+
+                if (!isOffer){
+                    Intent intent = new Intent(this, SwearActivity.class);
+                    startActivity(intent);
+                }
+
+
             }else {
                 model.setSwear(false);
 
@@ -362,6 +367,10 @@ public class AddAdsActivity extends AppCompatActivity implements OnMapReadyCallb
             binding.checkboxOffer.setVisibility(View.INVISIBLE);
             model.setHave_offer("with_offer");
             binding.expandLayout2.expand(true);
+        }else {
+            binding.checkboxOffer.setVisibility(View.VISIBLE);
+            model.setHave_offer("without_offer");
+            binding.expandLayout2.expand(false);
         }
 
         binding.checkboxOffer.setOnClickListener(view -> {
